@@ -253,6 +253,12 @@ class AtividadeFisica:
     def calcular_IMC(self,peso,altura):
         return peso/(altura**2)
 
+class Leitura:
+    def motivar(self):
+        return random.choice(["Quem lê vive mil vidas em uma só.", "Ler é treinar a mente para enxergar o mundo de outra forma.", "Um livro por dia afasta a ignorância para sempre.", "A leitura abre portas que a realidade ainda não mostrou.", "Quem lê nunca está sozinho.", "Cada página lida é um passo no seu crescimento.", "Livros são academias para a mente.", "Ler hoje é pensar melhor amanhã.", "A leitura transforma curiosidade em conhecimento.", "Quanto mais você lê, mais você entende o mundo."])
+    def calcular_media(self,paginas,dias):
+        return paginas/dias
+
 class Usuario:
     def __init__(self,nome, senha, caracterizacao):
         self.nome = nome
