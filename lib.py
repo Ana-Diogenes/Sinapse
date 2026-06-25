@@ -206,11 +206,11 @@ class ModeloIA(abc.ABC):
     def __init__(self,nome):
         self.nome = nome
     @abc.abstractmethod
-    def prever(self):
+    def prever(self,dados):
         pass
 
 class Knn(ModeloIA):
-    def prever(self):
+    def prever(self,dados):
         tabela = pd.read_csv("student_mental_health_burnout_1M.csv")
         tradutor = LabelEncoder() 
         tabela['gender'] = tradutor.fit_transform(tabela['gender'])
@@ -262,6 +262,7 @@ class Leitura:
         return random.choice(["Quem lê vive mil vidas em uma só.", "Ler é treinar a mente para enxergar o mundo de outra forma.", "Um livro por dia afasta a ignorância para sempre.", "A leitura abre portas que a realidade ainda não mostrou.", "Quem lê nunca está sozinho.", "Cada página lida é um passo no seu crescimento.", "Livros são academias para a mente.", "Ler hoje é pensar melhor amanhã.", "A leitura transforma curiosidade em conhecimento.", "Quanto mais você lê, mais você entende o mundo."])
     def calcular_media(self,paginas,dias):
         return paginas/dias
+    
 class Meditacao:
     nome = 'meditacao'
     def motivar(self):
@@ -306,11 +307,11 @@ class Usuario (AtividadeMixin):
 
 class Sistema:
     def __init__(self):
-        self.__senha = 'DemetriosMelhorProfessor'
-        usuarios = ''
+        self.senha = 'DemetriosMelhorProfessor'
+        user = ''
         with open('usuarios.csv',"r") as lista_usuarios:
-            usuarios = list(csv.reader(lista_usuarios, delimiter=","))
-        self.usuarios = usuarios
+            users = list(csv.reader(lista_usuarios, delimiter=","))
+        self.usuarios = users
 
     def __iadd__(self, usuario):
         with open('usuarios.csv',"a") as usuarios: 
@@ -327,11 +328,43 @@ class Sistema:
                     achou = True
         if achou == False: 
             return False
-        with open ('filmes.csv','w') as filmes: 
+        with open ('usuarios.csv','w') as users: 
             for i,linha in enumerate(lista_nova):
                 if i==0:
-                    filmes.write(linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
+                    users.write(linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
                 else:
-                    filmes.write('\n'+linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
+                    users.write('\n'+linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
         return True
+
+class AcessarSistema(abc.ABC):
+    @abc.abstractmethod
+    def listar_usuarios(sistema):
+        pass
+
+class Dev(Usuario,AcessarSistema):
+    senha_dev = 'DevDoSistema'
+    def __init__(self, nome, senha):
+        super().__init__(nome, senha)
+    
+    def listar_usuarios(sistema):
+        return sistema.usuarios
+    
+    def excluir_usuario(self, sistema,usuario):
+        sistema = sistema - usuario
+        return sistema
+
+    def adicionar_usuario(self,sistema,usuario):
+        sistema = sistema + usuario
+        return sistema
+    
+    def mudar_senha(self,nova_senha):
+        Sistema.senha = nova_senha
+
+class Mod(Usuario,AcessarSistema):
+    senha_mod = 'ModDoSistema'
+    def listar_usuarios(sistema):
+        nomes_usuarios = []
+        for user in sistema.usuarios:
+            nomes_usuarios.append(user[0])
+        return nomes_usuarios
     
