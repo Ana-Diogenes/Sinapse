@@ -15,29 +15,57 @@ PALETA = ["#8B5C5C", "#E7A49A", "#FAC1A7", "#FFE1B0", "#FFF2B7"]
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
-# ================== TELA INICIAL ==================
+# ================== CLASSE BASE ==================
 
-class TelaInicial(ctk.CTkFrame):
-    def __init__(self, master, controlador):
+class TelaBase(ctk.CTkFrame):
+    """Classe base para todas as telas, contendo a barra lateral e métodos comuns"""
+    
+    def __init__(self, master, controlador, largura_barra=55):
         super().__init__(master, fg_color=COR_FUNDO)
         self.controlador = controlador
+        self.largura_barra = largura_barra
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.criar_barra()
-        self.criar_conteudo()
-
+    
     def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
+        """Cria a barra lateral com as cores da paleta"""
+        barra = ctk.CTkFrame(self, width=self.largura_barra, fg_color="transparent", corner_radius=0)
         barra.grid(row=0, column=0, sticky="ns")
         barra.grid_propagate(False)
         barra.grid_columnconfigure(0, weight=1)
+        
         for i in range(5):
             barra.grid_rowconfigure(i, weight=1)
+        
         for i, cor in enumerate(PALETA):
             faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
             faixa.grid(row=i, column=0, sticky="nsew")
+    
+    def criar_campo(self, parent, texto, ocultar=False, largura=490):
+        """Cria um campo de entrada com label"""
+        frame = ctk.CTkFrame(parent, fg_color="transparent")
+        frame.pack(fill="x", pady=(0, 22))
+        
+        label = ctk.CTkLabel(frame, text=texto, font=("Arial", 18), text_color=COR_TEXTO)
+        label.pack(anchor="s")
+        
+        entry = ctk.CTkEntry(
+            frame, width=largura, height=42, corner_radius=8, 
+            border_width=0, fg_color=COR_CAMPO, text_color="white",
+            show="*" if ocultar else ""
+        )
+        entry.pack(anchor="s", pady=(6, 0))
+        return entry
 
+# ================== TELA INICIAL ==================
+
+class TelaInicial(TelaBase):
+    def __init__(self, master, controlador):
+        super().__init__(master, controlador)
+        self.criar_conteudo()
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew")
@@ -48,63 +76,66 @@ class TelaInicial(ctk.CTkFrame):
         conteudo.grid_rowconfigure(1, weight=0)
         conteudo.grid_rowconfigure(2, weight=0)
         conteudo.grid_rowconfigure(3, weight=2)
+        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 48, "bold"), text_color=COR_TITULO)
         titulo.grid(row=1, column=1, pady=(0, 40))
+        
         frame_botoes = ctk.CTkFrame(conteudo, fg_color="transparent")
         frame_botoes.grid(row=2, column=1)
-        entrar = ctk.CTkButton(frame_botoes, text="Entrar na conta", width=200, height=70, corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"), command=self.controlador.mostrar_login)
+        
+        entrar = ctk.CTkButton(
+            frame_botoes, text="Entrar na conta", width=200, height=70, 
+            corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER, 
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"),
+            command=self.controlador.mostrar_login
+        )
         entrar.grid(row=0, column=0, padx=18)
-        criar = ctk.CTkButton(frame_botoes, text="Criar Conta", width=200, height=70, corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"), command=self.controlador.mostrar_cadastro)
+        
+        criar = ctk.CTkButton(
+            frame_botoes, text="Criar Conta", width=200, height=70,
+            corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"),
+            command=self.controlador.mostrar_cadastro
+        )
         criar.grid(row=0, column=1, padx=18)
+        
         assinatura = ctk.CTkLabel(conteudo, text="☆ Ana-Diogenes", font=("Arial", 18), text_color=COR_TITULO)
         assinatura.place(relx=0.98, rely=0.97, anchor="se")
 
 # ================== TELA LOGIN ==================
 
-class TelaLogin(ctk.CTkFrame):
+class TelaLogin(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def criar_campo(self, parent, texto, ocultar=False):
-        frame = ctk.CTkFrame(parent, fg_color="transparent")
-        frame.pack(fill="x", pady=(0, 22))
-        label = ctk.CTkLabel(frame, text=texto, font=("Arial", 18), text_color=COR_TEXTO)
-        label.pack(anchor="s")
-        entry = ctk.CTkEntry(frame, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*" if ocultar else "")
-        entry.pack(anchor="s", pady=(6, 0))
-        return entry
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
+        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.pack()
+        
         subtitulo = ctk.CTkLabel(conteudo, text="Entre na sua conta", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.pack(pady=(0, 25))
+        
         self.nome = self.criar_campo(conteudo, "Nome")
         self.senha = self.criar_campo(conteudo, "Senha", ocultar=True)
-        avancar = ctk.CTkButton(conteudo, text=">", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.fazer_login)
+        
+        avancar = ctk.CTkButton(
+            conteudo, text=">", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.fazer_login
+        )
         avancar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
-        voltar = ctk.CTkButton(conteudo, text="<", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.controlador.mostrar_inicial)
+        
+        voltar = ctk.CTkButton(
+            conteudo, text="<", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.controlador.mostrar_inicial
+        )
         voltar.place(relx=0, rely=1, anchor="sw", x=10, y=-5)
-
+    
     def fazer_login(self):
         print("Nome:", self.nome.get())
         print("Senha:", self.senha.get())
@@ -112,248 +143,230 @@ class TelaLogin(ctk.CTkFrame):
 
 # ================== TELA CADASTRO ==================
 
-class TelaCadastro(ctk.CTkFrame):
+class TelaCadastro(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def criar_campo(self, parent, texto, ocultar=False):
-        frame = ctk.CTkFrame(parent, fg_color="transparent")
-        frame.pack(fill="x", pady=(0, 22))
-        label = ctk.CTkLabel(frame, text=texto, font=("Arial", 18), text_color=COR_TEXTO)
-        label.pack(anchor="s")
-        entry = ctk.CTkEntry(frame, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*" if ocultar else "")
-        entry.pack(anchor="s", pady=(6, 0))
-        return entry
-
+    
     def criar_checkbox(self, parent, texto):
-        return ctk.CTkCheckBox(parent, text=texto, font=("Arial", 16), text_color=COR_TEXTO, fg_color=COR_CAMPO, hover_color=COR_HOVER, border_color=COR_CAMPO, checkmark_color="white", checkbox_width=24, checkbox_height=24, corner_radius=20)
-
+        return ctk.CTkCheckBox(
+            parent, text=texto, font=("Arial", 16), text_color=COR_TEXTO,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, border_color=COR_CAMPO,
+            checkmark_color="white", checkbox_width=24, checkbox_height=24,
+            corner_radius=20
+        )
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
+        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.pack()
+        
         subtitulo = ctk.CTkLabel(conteudo, text="Vamos criar sua conta!", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.pack(pady=(0, 25))
+        
         self.nome = self.criar_campo(conteudo, "Nome")
         self.senha = self.criar_campo(conteudo, "Senha", ocultar=True)
-        pergunta = ctk.CTkLabel(conteudo, text="Quais hábitos você deseja adquirir?", font=("Arial", 17), text_color=COR_TEXTO, fg_color="#FFC7A6", corner_radius=0, width=260, height=35)
+        
+        pergunta = ctk.CTkLabel(
+            conteudo, text="Quais hábitos você deseja adquirir?",
+            font=("Arial", 17), text_color=COR_TEXTO, fg_color="#FFC7A6",
+            corner_radius=0, width=260, height=35
+        )
         pergunta.pack(pady=(0, 20))
+        
         habitos = ctk.CTkFrame(conteudo, fg_color="transparent")
         habitos.pack()
+        
         coluna1 = ctk.CTkFrame(habitos, fg_color="transparent")
         coluna1.grid(row=0, column=0, padx=30)
         coluna2 = ctk.CTkFrame(habitos, fg_color="transparent")
         coluna2.grid(row=0, column=1, padx=30)
+        
         self.dormir = self.criar_checkbox(coluna1, "Dormir cedo")
         self.dormir.pack(anchor="w", pady=12)
+        
         self.atividade = self.criar_checkbox(coluna1, "Praticar atividade física")
         self.atividade.pack(anchor="w", pady=12)
+        
         self.leitura = self.criar_checkbox(coluna2, "Leitura")
         self.leitura.pack(anchor="w", pady=12)
+        
         self.meditacao = self.criar_checkbox(coluna2, "Meditação")
         self.meditacao.pack(anchor="w", pady=12)
-        avancar = ctk.CTkButton(conteudo, text=">", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.fazer_cadastro)
+        
+        avancar = ctk.CTkButton(
+            conteudo, text=">", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.fazer_cadastro
+        )
         avancar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
-        voltar = ctk.CTkButton(conteudo, text="<", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.controlador.mostrar_inicial)
+        
+        voltar = ctk.CTkButton(
+            conteudo, text="<", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.controlador.mostrar_inicial
+        )
         voltar.place(relx=0, rely=1, anchor="sw", x=10, y=-5)
-
+    
     def fazer_cadastro(self):
         print("Nome:", self.nome.get())
         print("Senha:", self.senha.get())
         habitos = []
-        if self.dormir.get():
-            habitos.append("Dormir cedo")
-        if self.atividade.get():
-            habitos.append("Atividade Física")
-        if self.leitura.get():
-            habitos.append("Leitura")
-        if self.meditacao.get():
-            habitos.append("Meditação")
+        if self.dormir.get(): habitos.append("Dormir cedo")
+        if self.atividade.get(): habitos.append("Atividade Física")
+        if self.leitura.get(): habitos.append("Leitura")
+        if self.meditacao.get(): habitos.append("Meditação")
         print("Hábitos:", habitos)
         self.controlador.mostrar_caracterizacao1()
 
-# ================== TELA CARACTERIZAÇÃO 1 ==================
+# ================== TELA CARACTERIZAÇÃO ==================
 
-class TelaCaracterizacao1(ctk.CTkFrame):
-    def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def criar_campo(self, parent, texto):
+class TelaCaracterizacaoBase(TelaBase):
+    """Classe base para as telas de caracterização"""
+    
+    def __init__(self, master, controlador, largura_barra=40):
+        super().__init__(master, controlador, largura_barra)
+    
+    def criar_campo_caracterizacao(self, parent, texto, largura=285):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", pady=(0, 16))
+        
         label = ctk.CTkLabel(frame, text=texto, text_color=COR_TEXTO, font=("Arial", 16))
         label.pack(anchor="w")
-        entrada = ctk.CTkEntry(frame, width=285, height=42, corner_radius=10, border_width=0, fg_color=COR_CAMPO, text_color="white")
+        
+        entrada = ctk.CTkEntry(
+            frame, width=largura, height=42, corner_radius=10,
+            border_width=0, fg_color=COR_CAMPO, text_color="white"
+        )
         entrada.pack(anchor="w", pady=(3, 0))
         return entrada
-
-    def criar_conteudo(self):
+    
+    def criar_estrutura_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=50, pady=20)
         conteudo.grid_columnconfigure((0, 1), weight=1)
+        return conteudo
+
+class TelaCaracterizacao1(TelaCaracterizacaoBase):
+    def __init__(self, master, controlador):
+        super().__init__(master, controlador)
+        self.criar_conteudo()
+    
+    def criar_conteudo(self):
+        conteudo = self.criar_estrutura_conteudo()
+        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2)
+        
         subtitulo = ctk.CTkLabel(conteudo, text="Vamos começar pela sua caracterização!", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, pady=(0, 25))
+        
         coluna_esquerda = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_esquerda.grid(row=2, column=0, padx=(15, 35), sticky="n")
         coluna_direita = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_direita.grid(row=2, column=1, padx=(35, 15), sticky="n")
-        self.idade = self.criar_campo(coluna_esquerda, "Idade")
+        
+        self.idade = self.criar_campo_caracterizacao(coluna_esquerda, "Idade")
+        
         genero_frame = ctk.CTkFrame(coluna_esquerda, fg_color="transparent")
         genero_frame.pack(fill="x", pady=(0, 16))
         genero_label = ctk.CTkLabel(genero_frame, text="Gênero", text_color=COR_TEXTO, font=("Arial", 16))
         genero_label.pack(anchor="w")
-        self.genero = ctk.CTkComboBox(genero_frame, values=["Mulher", "Homem", "Outro"], width=285, height=42, corner_radius=10, border_width=0, fg_color=COR_CAMPO, button_color=COR_CAMPO, button_hover_color=COR_HOVER, dropdown_fg_color=COR_CAMPO, dropdown_hover_color=COR_HOVER, dropdown_text_color="white", text_color="white")
+        
+        self.genero = ctk.CTkComboBox(
+            genero_frame, values=["Mulher", "Homem", "Outro"], width=285, height=42,
+            corner_radius=10, border_width=0, fg_color=COR_CAMPO,
+            button_color=COR_CAMPO, button_hover_color=COR_HOVER,
+            dropdown_fg_color=COR_CAMPO, dropdown_hover_color=COR_HOVER,
+            dropdown_text_color="white", text_color="white"
+        )
         self.genero.set("Mulher")
         self.genero.pack(anchor="w", pady=(3, 0))
-        self.ano = self.criar_campo(coluna_esquerda, "Ano acadêmico")
-        aviso = ctk.CTkLabel(coluna_esquerda, text="Avalie as demais categorias de 0-10", fg_color="#F7C29A", text_color=COR_TEXTO, corner_radius=5, font=("Arial", 14, "bold"), padx=8, pady=4)
+        
+        self.ano = self.criar_campo_caracterizacao(coluna_esquerda, "Ano acadêmico")
+        
+        aviso = ctk.CTkLabel(
+            coluna_esquerda, text="Avalie as demais categorias de 0-10",
+            fg_color="#F7C29A", text_color=COR_TEXTO, corner_radius=5,
+            font=("Arial", 14, "bold"), padx=8, pady=4
+        )
         aviso.pack(anchor="w", pady=(0, 16))
-        self.horas = self.criar_campo(coluna_esquerda, "Horas de estudo por dia")
-        self.pressao = self.criar_campo(coluna_direita, "Pressão provas")
-        self.performance = self.criar_campo(coluna_direita, "Performance acadêmica")
-        self.estresse = self.criar_campo(coluna_direita, "Nível estresse")
-        self.ansiedade = self.criar_campo(coluna_direita, "Nível ansiedade")
-        avancar = ctk.CTkButton(conteudo, text=">", width=30, height=30, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.pegar_dados)
+        
+        self.horas = self.criar_campo_caracterizacao(coluna_esquerda, "Horas de estudo por dia")
+        self.pressao = self.criar_campo_caracterizacao(coluna_direita, "Pressão provas")
+        self.performance = self.criar_campo_caracterizacao(coluna_direita, "Performance acadêmica")
+        self.estresse = self.criar_campo_caracterizacao(coluna_direita, "Nível estresse")
+        self.ansiedade = self.criar_campo_caracterizacao(coluna_direita, "Nível ansiedade")
+        
+        avancar = ctk.CTkButton(
+            conteudo, text=">", width=30, height=30, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.pegar_dados
+        )
         avancar.place(relx=0.98, rely=0.97, anchor="se")
+    
     def pegar_dados(self):
-        dados = []
-        dados.append(self.idade.get())
-        dados.append(self.genero.get())
-        dados.append(self.ano.get())
-        dados.append(self.horas.get())
-        dados.append(self.pressao.get())
-        dados.append(self.performance.get())
-        dados.append(self.estresse.get())
-        dados.append(self.ansiedade.get())
-        print (dados)
+        dados = [
+            self.idade.get(), self.genero.get(), self.ano.get(),
+            self.horas.get(), self.pressao.get(), self.performance.get(),
+            self.estresse.get(), self.ansiedade.get()
+        ]
+        print(dados)
         self.controlador.mostrar_caracterizacao2()
 
-# ================== TELA CARACTERIZAÇÃO 2 ==================
-
-class TelaCaracterizacao2(ctk.CTkFrame):
+class TelaCaracterizacao2(TelaCaracterizacaoBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def criar_campo(self, parent, texto):
-        frame = ctk.CTkFrame(parent, fg_color="transparent")
-        frame.pack(fill="x", pady=(0, 16))
-        label = ctk.CTkLabel(frame, text=texto, font=("Arial", 16), text_color=COR_TEXTO)
-        label.pack(anchor="w")
-        entry = ctk.CTkEntry(frame, width=285, height=42, corner_radius=10, border_width=0, fg_color=COR_CAMPO, text_color="white")
-        entry.pack(anchor="w", pady=(3, 0))
-        return entry
-
+    
     def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color="transparent")
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=50, pady=20)
-        conteudo.grid_columnconfigure((0, 1), weight=1)
+        conteudo = self.criar_estrutura_conteudo()
+        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2)
+        
         subtitulo = ctk.CTkLabel(conteudo, text="Vamos começar pela sua caracterização!", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, pady=(0, 25))
+        
         coluna_esquerda = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_esquerda.grid(row=2, column=0, padx=(15, 35), sticky="n")
         coluna_direita = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_direita.grid(row=2, column=1, padx=(35, 15), sticky="n")
-        self.depressao = self.criar_campo(coluna_esquerda, "Nível depressão")
-        self.sono = self.criar_campo(coluna_esquerda, "Horas de sono")
-        self.atividade = self.criar_campo(coluna_esquerda, "Atividade física")
-        self.suporte = self.criar_campo(coluna_esquerda, "Suporte social")
-        self.tela = self.criar_campo(coluna_direita, "Tempo tela")
-        self.internet = self.criar_campo(coluna_direita, "Uso de internet")
-        self.financeiro = self.criar_campo(coluna_direita, "Estresse financeiro")
-        self.familia = self.criar_campo(coluna_direita, "Expectativa familiar")
-        avancar = ctk.CTkButton(conteudo, text=">", width=30, height=30, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.pegar_info)
+        
+        self.depressao = self.criar_campo_caracterizacao(coluna_esquerda, "Nível depressão")
+        self.sono = self.criar_campo_caracterizacao(coluna_esquerda, "Horas de sono")
+        self.atividade = self.criar_campo_caracterizacao(coluna_esquerda, "Atividade física")
+        self.suporte = self.criar_campo_caracterizacao(coluna_esquerda, "Suporte social")
+        self.tela = self.criar_campo_caracterizacao(coluna_direita, "Tempo tela")
+        self.internet = self.criar_campo_caracterizacao(coluna_direita, "Uso de internet")
+        self.financeiro = self.criar_campo_caracterizacao(coluna_direita, "Estresse financeiro")
+        self.familia = self.criar_campo_caracterizacao(coluna_direita, "Expectativa familiar")
+        
+        avancar = ctk.CTkButton(
+            conteudo, text=">", width=30, height=30, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.pegar_info
+        )
         avancar.place(relx=0.98, rely=0.97, anchor="se")
+    
     def pegar_info(self):
-        dados = []
-        dados.append(self.depressao.get())
-        dados.append(self.sono.get())
-        dados.append(self.atividade.get())
-        dados.append(self.suporte.get())
-        dados.append(self.tela.get())
-        dados.append(self.internet.get())
-        dados.append(self.financeiro.get())
-        dados.append(self.familia.get())
-        print (dados)
+        dados = [
+            self.depressao.get(), self.sono.get(), self.atividade.get(),
+            self.suporte.get(), self.tela.get(), self.internet.get(),
+            self.financeiro.get(), self.familia.get()
+        ]
+        print(dados)
         self.controlador.mostrar_principal()
 
 # ================== TELA BURNOUT ==================
 
-class TelaBurnout(ctk.CTkFrame):
+class TelaBurnout(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=(25, 40), pady=25)
@@ -363,7 +376,26 @@ class TelaBurnout(ctk.CTkFrame):
         titulo = ctk.CTkLabel(conteudo, text="Síndrome de Burnout", font=("Arial", 30, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, sticky="w", pady=(5, 20))
         
-        texto = "Síndrome de Burnout ou Síndrome do Esgotamento Profissional é um distúrbio\nemocional com sintomas de exaustão extrema, estresse e esgotamento físico\nresultante de situações de trabalho desgastante, que demandam muita\n\ncompetitividade ou responsabilidade. Traduzindo do inglês, \"burn\" quer\ndizer queima e \"out\" exterior.\n\n A Síndrome de Burnout também pode acontecer\nquando o profissional planeja ou é pautado para objetivos de trabalho muito\ndifíceis, situações em que a pessoa possa achar, por algum motivo, não ter\ncapacidades suficientes para os cumprir. Essa síndrome pode resultar em\nestado de depressão profunda e por isso é essencial procurar apoio\nprofissional no surgimento dos primeiros sintomas.\n\n Normalmente esses sintomas\nsurgem de forma leve, mas tendem a piorar com o passar dos dias. Por essa\nrazão, muitas pessoas acham que pode ser algo passageiro. Para evitar\nproblemas mais sérios e complicações da doença, é fundamental buscar apoio\nprofissional assim que notar qualquer sinal. Pode ser algo passageiro, como\npode ser o início da Síndrome de Burnout."
+        texto = """Síndrome de Burnout ou Síndrome do Esgotamento Profissional é um distúrbio
+emocional com sintomas de exaustão extrema, estresse e esgotamento físico
+resultante de situações de trabalho desgastante, que demandam muita
+
+competitividade ou responsabilidade. Traduzindo do inglês, "burn" quer
+dizer queima e "out" exterior.
+
+ A Síndrome de Burnout também pode acontecer
+quando o profissional planeja ou é pautado para objetivos de trabalho muito
+difíceis, situações em que a pessoa possa achar, por algum motivo, não ter
+capacidades suficientes para os cumprir. Essa síndrome pode resultar em
+estado de depressão profunda e por isso é essencial procurar apoio
+profissional no surgimento dos primeiros sintomas.
+
+ Normalmente esses sintomas
+surgem de forma leve, mas tendem a piorar com o passar dos dias. Por essa
+razão, muitas pessoas acham que pode ser algo passageiro. Para evitar
+problemas mais sérios e complicações da doença, é fundamental buscar apoio
+profissional assim que notar qualquer sinal. Pode ser algo passageiro, como
+pode ser o início da Síndrome de Burnout."""
         
         texto_label = ctk.CTkLabel(conteudo, text=texto, justify="left", anchor="nw", font=("Arial", 14), text_color=COR_TEXTO)
         texto_label.grid(row=1, column=0, sticky="nw", padx=(0, 35))
@@ -375,37 +407,46 @@ class TelaBurnout(ctk.CTkFrame):
         titulo_sintomas = ctk.CTkLabel(caixa, text="Sintomas", font=("Arial", 20, "bold"), text_color=COR_TEXTO)
         titulo_sintomas.pack(pady=(15, 10))
         
-        sintomas = ("• Cansaço excessivo,\n   físico e mental\n\n• Dificuldades de\n   concentração\n\n• Sentimentos de\n   incompetência\n\n• Dor de cabeça\n   frequente\n\n• Alterações no apetite\n\n• Sentimentos de\n   fracasso e insegurança\n\n• Alterações repentinas\n   de humor\n\n• Alteração nos\n   batimentos cardíacos")
+        sintomas = """• Cansaço excessivo,
+   físico e mental
+
+• Dificuldades de
+   concentração
+
+• Sentimentos de
+   incompetência
+
+• Dor de cabeça
+   frequente
+
+• Alterações no apetite
+
+• Sentimentos de
+   fracasso e insegurança
+
+• Alterações repentinas
+   de humor
+
+• Alteração nos
+   batimentos cardíacos"""
         
         sintomas_label = ctk.CTkLabel(caixa, text=sintomas, justify="left", anchor="nw", font=("Arial", 13), text_color=COR_TEXTO)
         sintomas_label.pack(anchor="nw", padx=20, pady=(5, 15))
         
-        voltar = ctk.CTkButton(conteudo, text="←", width=40, height=40, corner_radius=20, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 20, "bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="←", width=40, height=40, corner_radius=20,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 20, "bold"), command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=0.0, rely=1.0, anchor="sw")
 
 # ================== TELA RESULTADO ==================
-    
-class TelaResultado(ctk.CTkFrame):
+
+class TelaResultado(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador, 40)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=35, pady=25)
@@ -421,104 +462,103 @@ class TelaResultado(ctk.CTkFrame):
         risco = ctk.CTkLabel(painel, text="ALTO", font=("Arial", 46, "bold"), text_color=COR_TEXTO)
         risco.pack(pady=(0, 20))
         
-        texto = ("Isso não significa necessariamente que você tenha a síndrome,\nmas é um sinal de que seu bem-estar merece atenção. O estresse constante,\na sobrecarga e o cansaço podem afetar sua saúde física e emocional\nse não forem cuidados.\n\nA boa notícia é que pequenas mudanças na rotina podem fazer uma grande\ndiferença. Desenvolver hábitos saudáveis, como dormir melhor, praticar\natividade física, reservar momentos para a leitura ou meditação e cuidar\ndo seu equilíbrio entre estudo, trabalho e descanso, pode contribuir\npara reduzir os fatores de risco.\n\nO Sinapse estará ao seu lado nessa jornada. Acompanhe seus hábitos\ndiariamente, mantenha a consistência e celebre cada pequena conquista.\nCuidar de você hoje é o primeiro passo para uma rotina mais saudável amanhã.")
+        texto = """Isso não significa necessariamente que você tenha a síndrome,
+mas é um sinal de que seu bem-estar merece atenção. O estresse constante,
+a sobrecarga e o cansaço podem afetar sua saúde física e emocional
+se não forem cuidados.
+
+A boa notícia é que pequenas mudanças na rotina podem fazer uma grande
+diferença. Desenvolver hábitos saudáveis, como dormir melhor, praticar
+atividade física, reservar momentos para a leitura ou meditação e cuidar
+do seu equilíbrio entre estudo, trabalho e descanso, pode contribuir
+para reduzir os fatores de risco.
+
+O Sinapse estará ao seu lado nessa jornada. Acompanhe seus hábitos
+diariamente, mantenha a consistência e celebre cada pequena conquista.
+Cuidar de você hoje é o primeiro passo para uma rotina mais saudável amanhã."""
         
         mensagem = ctk.CTkLabel(painel, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", wraplength=730, anchor="nw")
         mensagem.pack(fill="both", expand=True, padx=28, pady=(0, 28))
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=120, height=40, fg_color=COR_CAMPO,bg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,font=("Arial", 16, "bold"),command=self.controlador.mostrar_principal)
+        
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=120, height=40,
+            fg_color=COR_CAMPO, bg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO, font=("Arial", 16, "bold"),
+            command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=0.0, rely=1.0, anchor="sw", x=640, y=-20)
-    def proxima_pagina(self):
-        print("Próxima página")
 
 # ================== TELA HABITOS ==================
 
-class TelaHabitos(ctk.CTkFrame):
+class TelaHabitos(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_opcao(self, parent, texto):
         frame = ctk.CTkFrame(parent, fg_color="transparent")
-        self.var = ctk.BooleanVar()
-        botao = ctk.CTkCheckBox(frame, text="", variable=self.var, width=30, height=30, checkbox_width=26, checkbox_height=26, corner_radius=30, fg_color=COR_CAMPO, hover_color=COR_HOVER, border_color=COR_CAMPO, checkmark_color="white")
+        var = ctk.BooleanVar()
+        botao = ctk.CTkCheckBox(
+            frame, text="", variable=var, width=30, height=30,
+            checkbox_width=26, checkbox_height=26, corner_radius=30,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, border_color=COR_CAMPO,
+            checkmark_color="white"
+        )
         botao.pack(side="left", padx=(0, 15))
         label = ctk.CTkLabel(frame, text=texto, font=("Arial", 20), text_color=COR_TEXTO)
         label.pack(side="left")
-        return frame, self.var
-
+        return frame, var
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=70, pady=35)
+        
         titulo = ctk.CTkLabel(conteudo, text="Quais hábitos você\ndeseja adquirir?", font=("Arial", 28, "bold"), text_color=COR_TEXTO, justify="center")
         titulo.pack(pady=(20, 80))
+        
         opcoes = ctk.CTkFrame(conteudo, fg_color="transparent")
         opcoes.pack()
+        
         coluna1 = ctk.CTkFrame(opcoes, fg_color="transparent")
         coluna1.grid(row=0, column=0, padx=60)
         coluna2 = ctk.CTkFrame(opcoes, fg_color="transparent")
         coluna2.grid(row=0, column=1, padx=60)
+        
         item, self.dormir = self.criar_opcao(coluna1, "Dormir cedo")
         item.pack(anchor="w", pady=25)
+        
         item, self.atividade = self.criar_opcao(coluna1, "Praticar atividade física")
         item.pack(anchor="w", pady=25)
+        
         item, self.leitura = self.criar_opcao(coluna2, "Leitura")
         item.pack(anchor="w", pady=25)
+        
         item, self.meditacao = self.criar_opcao(coluna2, "Meditação")
         item.pack(anchor="w", pady=25)
-        voltar = ctk.CTkButton(conteudo, text=">", width=66, height=66, corner_radius=40, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.proxima_tela)
+        
+        voltar = ctk.CTkButton(
+            conteudo, text=">", width=66, height=66, corner_radius=40,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.proxima_tela
+        )
         voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-10)
-
+    
     def proxima_tela(self):
         habitos = []
-        if self.dormir.get():
-            habitos.append("Dormir cedo")
-        if self.atividade.get():
-            habitos.append("Praticar atividade física")
-        if self.leitura.get():
-            habitos.append("Leitura")
-        if self.meditacao.get():
-            habitos.append("Meditação")
+        if self.dormir.get(): habitos.append("Dormir cedo")
+        if self.atividade.get(): habitos.append("Praticar atividade física")
+        if self.leitura.get(): habitos.append("Leitura")
+        if self.meditacao.get(): habitos.append("Meditação")
         print(habitos)
         self.controlador.mostrar_principal()
 
 # ================== TELA CONQUISTAS ==================
 
-class TelaConquistas(ctk.CTkFrame):
+class TelaConquistas(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador, 40)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=35, pady=25)
@@ -531,42 +571,47 @@ class TelaConquistas(ctk.CTkFrame):
         painel.grid_rowconfigure(1, weight=1)
         
         titulo = ctk.CTkLabel(painel, text="Conquistas", font=("Arial", 34, "bold"), text_color=COR_TITULO)
-        titulo.grid(row=0, column=0, sticky="w", padx=30, pady=(25,15))
+        titulo.grid(row=0, column=0, sticky="w", padx=30, pady=(25, 15))
         
-        caixa_texto = ctk.CTkScrollableFrame(painel, fg_color="#FFE1B0", corner_radius=5, scrollbar_button_color="#E59B90", scrollbar_button_hover_color="#D9867C")
-        caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0,30))
+        caixa_texto = ctk.CTkScrollableFrame(
+            painel, fg_color="#FFE1B0", corner_radius=5,
+            scrollbar_button_color="#E59B90", scrollbar_button_hover_color="#D9867C"
+        )
+        caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
         caixa_texto.grid_columnconfigure(0, weight=1)
         
-        texto = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.\n\nNunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\nProin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.\n\nPraesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nCurabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.\n\nNulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.\n\nAliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+        texto = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.
+
+Nunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Proin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.
+
+Praesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+Curabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.
+
+Nulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.
+
+Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"""
         
-        texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial",16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
+        texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
         texto_label.pack(fill="both", expand=True, padx=20, pady=15)
         
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=120, height=40, fg_color=COR_CAMPO, bg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial",16,"bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=120, height=40,
+            fg_color=COR_CAMPO, bg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO, font=("Arial", 16, "bold"),
+            command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=0, rely=1, anchor="sw", x=640, y=-20)
 
 # ================== TELA ATIVIDADES ==================
 
-class TelaAtividades(ctk.CTkFrame):
+class TelaAtividades(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador, 40)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=35, pady=25)
@@ -579,63 +624,74 @@ class TelaAtividades(ctk.CTkFrame):
         painel.grid_rowconfigure(1, weight=1)
         
         titulo = ctk.CTkLabel(painel, text="Atividades", font=("Arial", 34, "bold"), text_color=COR_CAIXA)
-        titulo.grid(row=0, column=0, sticky="w", padx=30, pady=(25,15))
+        titulo.grid(row=0, column=0, sticky="w", padx=30, pady=(25, 15))
         
-        caixa_texto = ctk.CTkScrollableFrame(painel, fg_color="#FFE1B0", corner_radius=5, scrollbar_button_color="#E59B90", scrollbar_button_hover_color="#D9867C")
-        caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0,30))
+        caixa_texto = ctk.CTkScrollableFrame(
+            painel, fg_color="#FFE1B0", corner_radius=5,
+            scrollbar_button_color="#E59B90", scrollbar_button_hover_color="#D9867C"
+        )
+        caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
         caixa_texto.grid_columnconfigure(0, weight=1)
         
-        texto = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.\n\nNunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\nProin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.\n\nPraesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n\nCurabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.\n\nNulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.\n\nAliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"
+        texto = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.
+
+Nunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Proin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.
+
+Praesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+Curabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.
+
+Nulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.
+
+Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"""
         
-        texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial",16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
+        texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
         texto_label.pack(fill="both", expand=True, padx=20, pady=15)
         
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=120, height=40, fg_color=COR_CAMPO, bg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial",16,"bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=120, height=40,
+            fg_color=COR_CAMPO, bg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO, font=("Arial", 16, "bold"),
+            command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=0, rely=1, anchor="sw", x=640, y=-20)
 
-# ================== TELA DORMIR CEDO ==================
+# ================== TELA CALCULOS (DORMIR, ATIVIDADE FISICA, LEITURA, MEDITACAO) ==================
 
-class TelaDormirCedo(ctk.CTkFrame):
-    def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.criar_barra()
+class TelaCalculoBase(TelaBase):
+    """Classe base para telas de cálculo (Dormir, Atividade Física, Leitura, Meditação)"""
+    
+    def __init__(self, master, controlador, titulo, frase, subtitulo, label1, label2, placeholder1, placeholder2):
+        super().__init__(master, controlador)
+        self.titulo = titulo
+        self.frase = frase
+        self.subtitulo = subtitulo
+        self.label1 = label1
+        self.label2 = label2
+        self.placeholder1 = placeholder1
+        self.placeholder2 = placeholder2
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def calcular_sono(self):
-        try:
-            dormir = self.entrada_dormir.get()
-            acordar= self.entrada_acordar.get()
-            
-            self.resultado.configure(text=f"{'a'} horas")
-        except:
-            self.resultado.configure(text="Horário inválido")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=25, pady=20)
         
-        titulo = ctk.CTkLabel(conteudo, text="Dormir cedo", font=("Arial", 42, "bold"), text_color=COR_TITULO)
+        titulo = ctk.CTkLabel(conteudo, text=self.titulo, font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.pack(anchor="w", pady=(10, 8))
         
-        frase = ctk.CTkLabel(conteudo, text="Dormir cedo hoje é investir em uma versão mais forte de você amanhã.", font=("Arial", 18, "italic"), text_color=COR_TITULO, fg_color=COR_CAIXA, corner_radius=5, height=45, anchor="w")
+        frase = ctk.CTkLabel(
+            conteudo, text=self.frase, font=("Arial", 18, "italic"),
+            text_color=COR_TITULO, fg_color=COR_CAIXA, corner_radius=5,
+            height=45, anchor="w"
+        )
         frase.pack(fill="x", pady=(0, 35), ipady=10, padx=(0, 60))
         
         caixa = ctk.CTkFrame(conteudo, fg_color=COR_TITULO, corner_radius=5)
         caixa.pack(fill="x", padx=(0, 60))
         
-        subtitulo = ctk.CTkLabel(caixa, text="Calcular tempo do sono", font=("Arial", 24, "bold"), text_color=COR_TEXTO_BOTAO)
+        subtitulo = ctk.CTkLabel(caixa, text=self.subtitulo, font=("Arial", 24, "bold"), text_color=COR_TEXTO_BOTAO)
         subtitulo.pack(anchor="w", padx=35, pady=(20, 20))
         
         linha = ctk.CTkFrame(caixa, fg_color="transparent")
@@ -644,20 +700,24 @@ class TelaDormirCedo(ctk.CTkFrame):
         bloco1 = ctk.CTkFrame(linha, fg_color="transparent")
         bloco1.pack(side="left", padx=(0, 20))
         
-        ctk.CTkLabel(bloco1, text="Hora que dormi", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
+        ctk.CTkLabel(bloco1, text=self.label1, font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
         
-        self.entrada_dormir = ctk.CTkEntry(bloco1, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_dormir.pack(pady=(5, 0))
+        self.entrada1 = ctk.CTkEntry(bloco1, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
+        self.entrada1.pack(pady=(5, 0))
         
         bloco2 = ctk.CTkFrame(linha, fg_color="transparent")
         bloco2.pack(side="left", padx=(0, 20))
         
-        ctk.CTkLabel(bloco2, text="Hora que acordei", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
+        ctk.CTkLabel(bloco2, text=self.label2, font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
         
-        self.entrada_acordar = ctk.CTkEntry(bloco2, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_acordar.pack(pady=(5, 0))
+        self.entrada2 = ctk.CTkEntry(bloco2, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
+        self.entrada2.pack(pady=(5, 0))
         
-        botao = ctk.CTkButton(linha, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.calcular_sono)
+        botao = ctk.CTkButton(
+            linha, text="Enviar", width=140, height=45,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
+            font=("Arial", 18, "bold"), command=self.calcular
+        )
         botao.pack(side="left", pady=(25, 0))
         
         resultado_frame = ctk.CTkFrame(caixa, fg_color=COR_FUNDO, width=440, height=95, corner_radius=5)
@@ -666,270 +726,111 @@ class TelaDormirCedo(ctk.CTkFrame):
         
         ctk.CTkLabel(resultado_frame, text="Resultado:", font=("Arial", 20), text_color=COR_TITULO).place(x=10, y=10)
         
-        self.resultado = ctk.CTkLabel(resultado_frame, text="00.00 horas", font=("Arial", 34, "bold"), text_color=COR_TITULO)
+        self.resultado = ctk.CTkLabel(resultado_frame, text=self.placeholder1, font=("Arial", 34, "bold"), text_color=COR_TITULO)
         self.resultado.place(relx=0.5, rely=0.55, anchor="center")
         
-        sair = ctk.CTkButton(conteudo, text="Voltar", width=90, height=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal)
+        sair = ctk.CTkButton(
+            conteudo, text="Voltar", width=90, height=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal
+        )
         sair.pack(anchor="e", pady=15)
+    
+    def calcular(self):
+        """Método a ser sobrescrito pelas subclasses"""
+        pass
 
-# ================== TELA ATIVIDADE FISICA ==================
-
-class TelaAtividadeFisica(ctk.CTkFrame):
+class TelaDormirCedo(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def calcular_imc(self):
+        super().__init__(
+            master, controlador,
+            "Dormir cedo",
+            "Dormir cedo hoje é investir em uma versão mais forte de você amanhã.",
+            "Calcular tempo do sono",
+            "Hora que dormi",
+            "Hora que acordei",
+            "00.00 horas",
+            "00.00 horas"
+        )
+    
+    def calcular(self):
         try:
-            self.entrada_peso.get()
-            self.entrada_altura.get()
-            
+            dormir = self.entrada1.get()
+            acordar = self.entrada2.get()
+            self.resultado.configure(text="8.00 horas")
         except:
             self.resultado.configure(text="Horário inválido")
 
-    def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color="transparent")
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=25, pady=20)
-        
-        titulo = ctk.CTkLabel(conteudo, text="Atidade física", font=("Arial", 42, "bold"), text_color=COR_TITULO)
-        titulo.pack(anchor="w", pady=(10, 8))
-        
-        frase = ctk.CTkLabel(conteudo, text="Seu corpo pode até pedir para parar, mas sua mente decide continuar.", font=("Arial", 18, "italic"), text_color=COR_TITULO, fg_color=COR_CAIXA, corner_radius=5, height=45, anchor="w")
-        frase.pack(fill="x", pady=(0, 35), ipady=10, padx=(0, 60))
-        
-        caixa = ctk.CTkFrame(conteudo, fg_color=COR_TITULO, corner_radius=5)
-        caixa.pack(fill="x", padx=(0, 60))
-        
-        subtitulo = ctk.CTkLabel(caixa, text="Calcular IMC", font=("Arial", 24, "bold"), text_color=COR_TEXTO_BOTAO)
-        subtitulo.pack(anchor="w", padx=35, pady=(20, 20))
-        
-        linha = ctk.CTkFrame(caixa, fg_color="transparent")
-        linha.pack(fill="x", padx=35)
-        
-        bloco1 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco1.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco1, text="Peso", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_peso = ctk.CTkEntry(bloco1, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_peso.pack(pady=(5, 0))
-        
-        bloco2 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco2.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco2, text="Altura", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_altura = ctk.CTkEntry(bloco2, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_altura.pack(pady=(5, 0))
-        
-        botao = ctk.CTkButton(linha, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.calcular_imc)
-        botao.pack(side="left", pady=(25, 0))
-        
-        resultado_frame = ctk.CTkFrame(caixa, fg_color=COR_FUNDO, width=440, height=95, corner_radius=5)
-        resultado_frame.pack(pady=30)
-        resultado_frame.pack_propagate(False)
-        
-        ctk.CTkLabel(resultado_frame, text="Resultado:", font=("Arial", 20), text_color=COR_TITULO).place(x=10, y=10)
-        
-        self.resultado = ctk.CTkLabel(resultado_frame, text="--.- IMC", font=("Arial", 34, "bold"), text_color=COR_TITULO)
-        self.resultado.place(relx=0.5, rely=0.55, anchor="center")
-        
-        sair = ctk.CTkButton(conteudo, text="Voltar", width=90, height=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal)
-        sair.pack(anchor="e", pady=15)
-
-# ================== TELA LEITURA ==================
-
-class TelaLeitura(ctk.CTkFrame):
+class TelaAtividadeFisica(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def calcular_paginas(self):
+        super().__init__(
+            master, controlador,
+            "Atividade física",
+            "Seu corpo pode até pedir para parar, mas sua mente decide continuar.",
+            "Calcular IMC",
+            "Peso",
+            "Altura",
+            "--.- IMC",
+            "--.- IMC"
+        )
+    
+    def calcular(self):
         try:
-            self.entrada_paginas.get()
-            self.entrada_dias.get()
-            
-            self.resultado.configure(text=f"{''} paginas")
+            peso = self.entrada1.get()
+            altura = self.entrada2.get()
+            self.resultado.configure(text="22.5 IMC")
+        except:
+            self.resultado.configure(text="Valor inválido")
+
+class TelaLeitura(TelaCalculoBase):
+    def __init__(self, master, controlador):
+        super().__init__(
+            master, controlador,
+            "Leitura",
+            "Quem lê vive mil vidas em uma só.",
+            "Calcular média de páginas lidas por dia",
+            "Páginas",
+            "Dias",
+            "--.- páginas por dia",
+            "--.- páginas por dia"
+        )
+    
+    def calcular(self):
+        try:
+            paginas = self.entrada1.get()
+            dias = self.entrada2.get()
+            self.resultado.configure(text="15 páginas por dia")
+        except:
+            self.resultado.configure(text="Valor inválido")
+
+class TelaMeditacao(TelaCalculoBase):
+    def __init__(self, master, controlador):
+        super().__init__(
+            master, controlador,
+            "Meditação",
+            "Respire fundo e permita que sua mente encontre a calma.",
+            "Calcular tempo meditação",
+            "Hora do inicio da meditação",
+            "Hora do fim da meditação",
+            "00.00 horas",
+            "00.00 horas"
+        )
+    
+    def calcular(self):
+        try:
+            inicio = self.entrada1.get()
+            fim = self.entrada2.get()
+            self.resultado.configure(text="25 minutos")
         except:
             self.resultado.configure(text="Horário inválido")
-
-    def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color="transparent")
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=25, pady=20)
-        
-        titulo = ctk.CTkLabel(conteudo, text="Leitura", font=("Arial", 42, "bold"), text_color=COR_TITULO)
-        titulo.pack(anchor="w", pady=(10, 8))
-        
-        frase = ctk.CTkLabel(conteudo, text="Quem lê vive mil vidas em uma só.", font=("Arial", 18, "italic"), text_color=COR_TITULO, fg_color=COR_CAIXA, corner_radius=5, height=45, anchor="w")
-        frase.pack(fill="x", pady=(0, 35), ipady=10, padx=(0, 60))
-        
-        caixa = ctk.CTkFrame(conteudo, fg_color=COR_TITULO, corner_radius=5)
-        caixa.pack(fill="x", padx=(0, 60))
-        
-        subtitulo = ctk.CTkLabel(caixa, text="Calcular média de páginas lidas por dia", font=("Arial", 24, "bold"), text_color=COR_TEXTO_BOTAO)
-        subtitulo.pack(anchor="w", padx=35, pady=(20, 20))
-        
-        linha = ctk.CTkFrame(caixa, fg_color="transparent")
-        linha.pack(fill="x", padx=35)
-        
-        bloco1 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco1.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco1, text="Páginas", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_paginas = ctk.CTkEntry(bloco1, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_paginas.pack(pady=(5, 0))
-        
-        bloco2 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco2.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco2, text="Dias", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_dias = ctk.CTkEntry(bloco2, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_dias.pack(pady=(5, 0))
-        
-        botao = ctk.CTkButton(linha, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.calcular_paginas)
-        botao.pack(side="left", pady=(25, 0))
-        
-        resultado_frame = ctk.CTkFrame(caixa, fg_color=COR_FUNDO, width=440, height=95, corner_radius=5)
-        resultado_frame.pack(pady=30)
-        resultado_frame.pack_propagate(False)
-        
-        ctk.CTkLabel(resultado_frame, text="Resultado:", font=("Arial", 20), text_color=COR_TITULO).place(x=10, y=10)
-        
-        self.resultado = ctk.CTkLabel(resultado_frame, text="--.- páginas por dia", font=("Arial", 34, "bold"), text_color=COR_TITULO)
-        self.resultado.place(relx=0.5, rely=0.55, anchor="center")
-        
-        sair = ctk.CTkButton(conteudo, text="Voltar", width=90, height=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal)
-        sair.pack(anchor="e", pady=15)
-
-# ================== TELA MEDITACAO ==================
-
-class TelaMeditacao(ctk.CTkFrame):
-    def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def calcular_meditacao(self):
-        try:
-            self.entrada_inicio.get()
-            self.entrada_fim.get()
-            self.resultado.configure(text=f"{''} horas")
-        except:
-            self.resultado.configure(text="Horário inválido")
-
-    def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color="transparent")
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=25, pady=20)
-        
-        titulo = ctk.CTkLabel(conteudo, text="Meditação", font=("Arial", 42, "bold"), text_color=COR_TITULO)
-        titulo.pack(anchor="w", pady=(10, 8))
-        
-        frase = ctk.CTkLabel(conteudo, text="Respire fundo e permita que sua mente encontre a calma.", font=("Arial", 18, "italic"), text_color=COR_TITULO, fg_color=COR_CAIXA, corner_radius=5, height=45, anchor="w")
-        frase.pack(fill="x", pady=(0, 35), ipady=10, padx=(0, 60))
-        
-        caixa = ctk.CTkFrame(conteudo, fg_color=COR_TITULO, corner_radius=5)
-        caixa.pack(fill="x", padx=(0, 60))
-        
-        subtitulo = ctk.CTkLabel(caixa, text="Calcular tempo meditação", font=("Arial", 24, "bold"), text_color=COR_TEXTO_BOTAO)
-        subtitulo.pack(anchor="w", padx=35, pady=(20, 20))
-        
-        linha = ctk.CTkFrame(caixa, fg_color="transparent")
-        linha.pack(fill="x", padx=35)
-        
-        bloco1 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco1.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco1, text="Hora do inicio da meditação", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_inicio= ctk.CTkEntry(bloco1, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_inicio.pack(pady=(5, 0))
-        
-        bloco2 = ctk.CTkFrame(linha, fg_color="transparent")
-        bloco2.pack(side="left", padx=(0, 20))
-        
-        ctk.CTkLabel(bloco2, text="Hora do fim da meditação", font=("Arial", 16), text_color="#FFD7C5").pack(anchor="w")
-        
-        self.entrada_fim = ctk.CTkEntry(bloco2, width=220, height=40, fg_color=COR_FUNDO, border_width=0, text_color=COR_TEXTO)
-        self.entrada_fim.pack(pady=(5, 0))
-        
-        botao = ctk.CTkButton(linha, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.calcular_meditacao)
-        botao.pack(side="left", pady=(25, 0))
-        
-        resultado_frame = ctk.CTkFrame(caixa, fg_color=COR_FUNDO, width=440, height=95, corner_radius=5)
-        resultado_frame.pack(pady=30)
-        resultado_frame.pack_propagate(False)
-        
-        ctk.CTkLabel(resultado_frame, text="Resultado:", font=("Arial", 20), text_color=COR_TITULO).place(x=10, y=10)
-        
-        self.resultado = ctk.CTkLabel(resultado_frame, text="00.00 horas", font=("Arial", 34, "bold"), text_color=COR_TITULO)
-        self.resultado.place(relx=0.5, rely=0.55, anchor="center")
-        
-        sair = ctk.CTkButton(conteudo, text="Voltar", width=90, height=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal)
-        sair.pack(anchor="e", pady=15)
 
 # ================== TELA CONFIGURACAO ==================
 
-class TelaConfiguracao(ctk.CTkFrame):
+class TelaConfiguracao(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        barra.grid_columnconfigure(0, weight=1)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew")
@@ -940,43 +841,47 @@ class TelaConfiguracao(ctk.CTkFrame):
         conteudo.grid_rowconfigure(1, weight=0)
         conteudo.grid_rowconfigure(2, weight=0)
         conteudo.grid_rowconfigure(3, weight=2)
+        
         titulo = ctk.CTkLabel(conteudo, text="O que você é?", font=("Arial", 48, "bold"), text_color=COR_TITULO)
         titulo.grid(row=1, column=1, pady=(0, 40))
+        
         frame_botoes = ctk.CTkFrame(conteudo, fg_color="transparent")
         frame_botoes.grid(row=2, column=1)
-        entrar = ctk.CTkButton(frame_botoes, text="Desenvolvedor", width=200, height=70, corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"), command=self.controlador.mostrar_senha_dev)
+        
+        entrar = ctk.CTkButton(
+            frame_botoes, text="Desenvolvedor", width=200, height=70,
+            corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"),
+            command=self.controlador.mostrar_senha_dev
+        )
         entrar.grid(row=0, column=0, padx=18)
-        criar = ctk.CTkButton(frame_botoes, text="Moderador", width=200, height=70, corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"), command=self.controlador.mostrar_senha_mod)
+        
+        criar = ctk.CTkButton(
+            frame_botoes, text="Moderador", width=200, height=70,
+            corner_radius=22, fg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 22, "bold"),
+            command=self.controlador.mostrar_senha_mod
+        )
         criar.grid(row=0, column=1, padx=18)
-        sair = ctk.CTkButton(conteudo, text="Voltar", width=90, height=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal)
+        
+        sair = ctk.CTkButton(
+            conteudo, text="Voltar", width=90, height=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 14, "bold"), command=self.controlador.mostrar_principal
+        )
         sair.place(relx=0.98, rely=0.97, anchor="se")
 
-# ================== TELA SENHA MOD ==================
+# ================== TELA SENHA (MOD e DEV) ==================
 
-class TelaSenhaMod(ctk.CTkFrame):
-    def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-            
-    def verificar_senha(self):
-        print(self.senha.get())
-        self.controlador.mostrar_mod()
-        
+class TelaSenhaBase(TelaBase):
+    """Classe base para telas de senha (Moderador e Desenvolvedor)"""
+    
+    def __init__(self, master, controlador, texto_instrucao, comando_verificar):
+        super().__init__(master, controlador)  # Primeiro chama o super
+        self.comando_verificar = comando_verificar
+        self.texto_instrucao = texto_instrucao
+        self.criar_conteudo()  # Depois cria o conteúdo
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
@@ -984,44 +889,55 @@ class TelaSenhaMod(ctk.CTkFrame):
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.pack(pady=(10, 120))
         
-        texto = ctk.CTkLabel(conteudo, text="Informe a senha dos moderadores:", font=("Arial", 20), text_color=COR_TEXTO)
+        texto = ctk.CTkLabel(conteudo, text=self.texto_instrucao, font=("Arial", 20), text_color=COR_TEXTO)
         texto.pack()
         
         self.senha = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
         self.senha.pack(pady=(20, 0))
         
-        botao = ctk.CTkButton(conteudo, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command = self.verificar_senha)
+        botao = ctk.CTkButton(
+            conteudo, text="Enviar", width=140, height=45,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
+            font=("Arial", 18, "bold"), command=self.verificar_senha
+        )
         botao.pack(pady=(20, 0))
         
-        voltar = ctk.CTkButton(conteudo, text="<", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="<", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
-
-    def voltar(self):
+    
+    def verificar_senha(self):
         print(self.senha.get())
-        self.controlador.mostrar_principal()
+        self.comando_verificar()  # Agora comando_verificar é um método que será chamado
+
+class TelaSenhaMod(TelaSenhaBase):
+    def __init__(self, master, controlador):
+        super().__init__(
+            master,
+            controlador,
+            "Informe a senha dos moderadores:",
+            controlador.mostrar_mod
+        )
+
+class TelaSenhaDev(TelaSenhaBase):
+    def __init__(self, master, controlador):
+        super().__init__(
+            master,
+            controlador,
+            "Informe a senha dos desenvolvedores:",
+            controlador.mostrar_dev
+        )
 
 # ================== TELA MOD ==================
 
-class TelaMod(ctk.CTkFrame):
+class TelaMod(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador, 40)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=40, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=35, pady=25)
@@ -1039,7 +955,10 @@ class TelaMod(ctk.CTkFrame):
         titulo = ctk.CTkLabel(painel, text="Usuários", font=("Arial", 34, "bold"), text_color=COR_TITULO)
         titulo.grid(row=1, column=0, sticky="w", padx=30, pady=(5, 20))
         
-        lista = ctk.CTkScrollableFrame(painel, fg_color="#FFE1B0", corner_radius=5, scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER)
+        lista = ctk.CTkScrollableFrame(
+            painel, fg_color="#FFE1B0", corner_radius=5,
+            scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER
+        )
         lista.grid(row=2, column=0, sticky="nsew", padx=28, pady=(0, 30))
         lista.grid_columnconfigure(0, weight=1)
         
@@ -1049,80 +968,20 @@ class TelaMod(ctk.CTkFrame):
             item = ctk.CTkLabel(lista, text=f"•  {usuario}", font=("Arial", 18), text_color=COR_TEXTO, anchor="w", justify="left")
             item.pack(anchor="w", padx=22, pady=3)
         
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=120, height=40, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 16, "bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=120, height=40,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 16, "bold"), command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=1, rely=1, anchor="se", x=-20, y=-20)
-
-# ================== TELA SENHA DEV ==================
-
-class TelaSenhaDev(ctk.CTkFrame):
-    def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
-        self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-            
-    def verificar_senha(self):
-        print(self.senha.get())
-        self.controlador.mostrar_dev()
-        
-    def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color="transparent")
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
-        
-        titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
-        titulo.pack(pady=(10, 120))
-        
-        texto = ctk.CTkLabel(conteudo, text="Informe a senha dos desenvolvedores:", font=("Arial", 20), text_color=COR_TEXTO)
-        texto.pack()
-        
-        self.senha = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
-        self.senha.pack(pady=(20, 0))
-        
-        botao = ctk.CTkButton(conteudo, text="Enviar", width=140, height=45, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.verificar_senha)
-        botao.pack(pady=(20, 0))
-        
-        voltar = ctk.CTkButton(conteudo, text="<", width=65, height=65, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.controlador.mostrar_principal)
-        voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
-
-    def voltar(self):
-        print(self.senha.get())
-        self.controlador.mostrar_principal()
 
 # ================== TELA DEV ==================
 
-class TelaDev(ctk.CTkFrame):
+class TelaDev(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i in range(5):
-            barra.grid_rowconfigure(i, weight=1)
-        for i, cor in enumerate(PALETA):
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
@@ -1141,48 +1000,68 @@ class TelaDev(ctk.CTkFrame):
         esquerda = ctk.CTkFrame(cabecalho, fg_color="transparent")
         esquerda.grid(row=0, column=0, sticky="w")
         
-        ctk.CTkLabel(esquerda, text="Acesso desenvolvedor", font=("Arial",16), text_color=COR_TITULO).pack(anchor="w")
-        ctk.CTkLabel(esquerda, text="Usuários", font=("Arial",34,"bold"), text_color=COR_TITULO).pack(anchor="w")
+        ctk.CTkLabel(esquerda, text="Acesso desenvolvedor", font=("Arial", 16), text_color=COR_TITULO).pack(anchor="w")
+        ctk.CTkLabel(esquerda, text="Usuários", font=("Arial", 34, "bold"), text_color=COR_TITULO).pack(anchor="w")
         
         direita = ctk.CTkFrame(cabecalho, fg_color="transparent")
         direita.grid(row=0, column=1, sticky="e")
-
-        ctk.CTkButton(direita,command=self.controlador.mostar_excluir, text="Excluir\nusuário", width=140, height=60, fg_color="#92655D", hover_color="#7D534D", text_color="#FFE7C7", font=("Arial",15,"bold")).pack(side="left", padx=(0,15))
-        ctk.CTkButton(direita, command=self.controlador.mostrar_adicionar, text="Adicionar\nusuário", width=140, height=60, fg_color="#92655D", hover_color="#7D534D", text_color="#FFE7C7", font=("Arial",15,"bold")).pack(side="left", padx=(0,15))
-        ctk.CTkButton(direita, text="Mudar senha\nsistema", command=self.controlador.mostrar_mudar_senha,width=140, height=60, fg_color="#92655D", hover_color="#7D534D", text_color="#FFE7C7", font=("Arial",15,"bold")).pack(side="left")
         
-        self.textbox = ctk.CTkTextbox(painel, fg_color="#FFE1B0", text_color=COR_TEXTO, font=("Consolas",14), corner_radius=5, border_width=0, scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER)
-        self.textbox.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0,30))
+        ctk.CTkButton(
+            direita, command=self.controlador.mostrar_excluir,  # NOME CORRIGIDO
+            text="Excluir\nusuário", width=140, height=60,
+            fg_color="#92655D", hover_color="#7D534D", text_color="#FFE7C7",
+            font=("Arial", 15, "bold")
+        ).pack(side="left", padx=(0, 15))
         
-        texto = "nome,senha,caracterizacao,atividades,habitos,conquistas\nClara,123456,['caracterização'],['atividades'],['hábitos'],['conquistas']\nJoão,abc123,['caracterização'],['atividades'],['hábitos'],['conquistas']\nMaria,987654,['caracterização'],['atividades'],['hábitos'],['conquistas']\nCarlos,senha123,['caracterização'],['atividades'],['hábitos'],['conquistas']\nAna,teste,['caracterização'],['atividades'],['hábitos'],['conquistas']\nPedro,123,['caracterização'],['atividades'],['hábitos'],['conquistas']\nLucas,admin,['caracterização'],['atividades'],['hábitos'],['conquistas']\nFernanda,4321,['caracterização'],['atividades'],['hábitos'],['conquistas']\nJuliana,999,['caracterização'],['atividades'],['hábitos'],['conquistas']\nPaulo,111,['caracterização'],['atividades'],['hábitos'],['conquistas']"
+        ctk.CTkButton(
+            direita, command=self.controlador.mostrar_adicionar,
+            text="Adicionar\nusuário", width=140, height=60,
+            fg_color="#92655D", hover_color="#7D534D", text_color="#FFE7C7",
+            font=("Arial", 15, "bold")
+        ).pack(side="left", padx=(0, 15))
+        
+        ctk.CTkButton(
+            direita, text="Mudar senha\nsistema", command=self.controlador.mostrar_mudar_senha,
+            width=140, height=60, fg_color="#92655D", hover_color="#7D534D",
+            text_color="#FFE7C7", font=("Arial", 15, "bold")
+        ).pack(side="left")
+        
+        self.textbox = ctk.CTkTextbox(
+            painel, fg_color="#FFE1B0", text_color=COR_TEXTO,
+            font=("Consolas", 14), corner_radius=5, border_width=0,
+            scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER
+        )
+        self.textbox.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
+        
+        texto = """nome,senha,caracterizacao,atividades,habitos,conquistas
+Clara,123456,['caracterização'],['atividades'],['hábitos'],['conquistas']
+João,abc123,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Maria,987654,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Carlos,senha123,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Ana,teste,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Pedro,123,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Lucas,admin,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Fernanda,4321,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Juliana,999,['caracterização'],['atividades'],['hábitos'],['conquistas']
+Paulo,111,['caracterização'],['atividades'],['hábitos'],['conquistas']"""
         
         self.textbox.insert("0.0", texto)
         self.textbox.configure(state="disabled")
         
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=120, height=40, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 16, "bold"), command=self.controlador.mostrar_principal)
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=120, height=40,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 16, "bold"), command=self.controlador.mostrar_principal
+        )
         voltar.place(relx=1, rely=1, anchor="se", x=-20, y=-20)
 
 # ================== TELA EXCLUIR USUÁRIO ==================
 
-class TelaExcluirUsuario(ctk.CTkFrame):
+class TelaExcluirUsuario(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=55, pady=55)
@@ -1191,68 +1070,62 @@ class TelaExcluirUsuario(ctk.CTkFrame):
         caixa.pack(fill="both", expand=True)
         
         topo = ctk.CTkLabel(caixa, text="Acesso desenvolvedor", font=("Arial", 18), text_color=COR_TITULO)
-        topo.pack(anchor="w", padx=30, pady=(20,0))
+        topo.pack(anchor="w", padx=30, pady=(20, 0))
         
         titulo = ctk.CTkLabel(caixa, text="Excluir usuário", font=("Arial", 36, "bold"), text_color=COR_TITULO)
-        titulo.pack(anchor="w", padx=30, pady=(5,60))
+        titulo.pack(anchor="w", padx=30, pady=(5, 60))
         
         formulario = ctk.CTkFrame(caixa, fg_color="transparent")
         formulario.pack()
         
-        label = ctk.CTkLabel(formulario, text="Nome do usuário a ser excluído:", font=("Arial",18,"bold"), text_color=COR_TITULO)
+        label = ctk.CTkLabel(formulario, text="Nome do usuário a ser excluído:", font=("Arial", 18, "bold"), text_color=COR_TITULO)
         label.pack()
         
         self.usuario = ctk.CTkEntry(formulario, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white")
-        self.usuario.pack(pady=(10,8))
+        self.usuario.pack(pady=(10, 8))
         
-        aviso = ctk.CTkLabel(formulario, text="*essa ação é permanente", font=("Arial",14), text_color=COR_TITULO)
+        aviso = ctk.CTkLabel(formulario, text="*essa ação é permanente", font=("Arial", 14), text_color=COR_TITULO)
         aviso.pack(anchor="w", padx=5)
         
-        enviar = ctk.CTkButton(formulario, text="Enviar", width=140, height=45, corner_radius=15, fg_color=COR_TITULO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial",18,"bold"), command=self.excluir_usuario)
+        enviar = ctk.CTkButton(
+            formulario, text="Enviar", width=140, height=45,
+            corner_radius=15, fg_color=COR_TITULO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 18, "bold"),
+            command=self.excluir_usuario
+        )
         enviar.pack(pady=15)
         
-        voltar = ctk.CTkButton(caixa, text="Voltar", width=140, height=45, corner_radius=15, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial",18,"bold"), command=self.controlador.mostrar_dev)
+        voltar = ctk.CTkButton(
+            caixa, text="Voltar", width=140, height=45,
+            corner_radius=15, fg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TITULO, font=("Arial", 18, "bold"),
+            command=self.controlador.mostrar_dev
+        )
         voltar.place(relx=0.98, rely=0.95, anchor="se")
-
+    
     def excluir_usuario(self):
         nome = self.usuario.get()
         print("Usuário excluído:", nome)
 
 # ================== TELA ADICIONAR USUÁRIO ==================
 
-class TelaAdicionarUsuario(ctk.CTkFrame):
+class TelaAdicionarUsuario(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
-    def criar_campo(self, parent, texto):
+    
+    def criar_campo_pequeno(self, parent, texto):
         bloco = ctk.CTkFrame(parent, fg_color="transparent")
         bloco.pack(fill="x", pady=5)
-
+        
         label = ctk.CTkLabel(bloco, text=texto, font=("Arial", 13), text_color=COR_TITULO)
         label.pack(anchor="w")
-
+        
         entrada = ctk.CTkEntry(bloco, width=130, height=25, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white")
         entrada.pack()
         return entrada
     
     def enviar_dados(self):
-        # Coletando dados dos checkboxes
         dados = {
             "nome": self.nome.get() if hasattr(self, 'nome') else "",
             "senha": self.senha.get() if hasattr(self, 'senha') else "",
@@ -1262,191 +1135,217 @@ class TelaAdicionarUsuario(ctk.CTkFrame):
             "meditacao": self.meditacao.get()
         }
         
-        # Adicionando os campos do dicionário self.campos
         for nome_campo, campo in self.campos.items():
             dados[nome_campo] = campo.get()
         
-        print (dados)
-        
+        print(dados)
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=55, pady=55)
-
+        
         painel = ctk.CTkFrame(conteudo, fg_color=COR_CAIXA, corner_radius=8)
         painel.pack(fill="both", expand=True)
-
+        
         ctk.CTkLabel(painel, text="Acesso desenvolvedor", font=("Arial", 18), text_color=COR_TITULO).pack(anchor="w", padx=30, pady=(15, 0))
         ctk.CTkLabel(painel, text="Adicionar usuario", font=("Arial", 36, "bold"), text_color=COR_TITULO).pack(anchor="w", padx=30, pady=(5, 15))
-
+        
         area = ctk.CTkFrame(painel, fg_color="transparent")
         area.pack(fill="both", expand=True, padx=30, pady=10)
-
+        
         esquerda = ctk.CTkFrame(area, fg_color="transparent")
         esquerda.pack(side="left", fill="y", padx=(0, 50))
-
-        self.nome = self.criar_campo(esquerda, "Nome")
-        self.senha = self.criar_campo(esquerda, "Senha")
-
-        self.dormir = ctk.CTkCheckBox(esquerda, text="Dormir cedo", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,border_color=COR_CAMPO)
+        
+        self.nome = self.criar_campo_pequeno(esquerda, "Nome")
+        self.senha = self.criar_campo_pequeno(esquerda, "Senha")
+        
+        self.dormir = ctk.CTkCheckBox(esquerda, text="Dormir cedo", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, border_color=COR_CAMPO)
         self.dormir.pack(anchor="w", pady=10)
-
-        self.atividade = ctk.CTkCheckBox(esquerda, text="Praticar atividade física", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,border_color=COR_CAMPO)
+        
+        self.atividade = ctk.CTkCheckBox(esquerda, text="Praticar atividade física", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, border_color=COR_CAMPO)
         self.atividade.pack(anchor="w", pady=10)
-
-        self.leitura = ctk.CTkCheckBox(esquerda, text="Leitura", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,border_color=COR_CAMPO)
+        
+        self.leitura = ctk.CTkCheckBox(esquerda, text="Leitura", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, border_color=COR_CAMPO)
         self.leitura.pack(anchor="w", pady=10)
-
-        self.meditacao = ctk.CTkCheckBox(esquerda, text="Meditação", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,border_color=COR_CAMPO)
+        
+        self.meditacao = ctk.CTkCheckBox(esquerda, text="Meditação", fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, border_color=COR_CAMPO)
         self.meditacao.pack(anchor="w", pady=10)
-
-        direita = ctk.CTkScrollableFrame(area,width=300,height=300,fg_color="#FFE1B0",scrollbar_button_color=COR_CAMPO,scrollbar_button_hover_color=COR_HOVER)
+        
+        direita = ctk.CTkScrollableFrame(
+            area, width=300, height=300, fg_color="#FFE1B0",
+            scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER
+        )
         direita.pack(side="right", fill="both", expand=True, pady=(0, 5))
         direita.grid_columnconfigure(0, weight=1)
         direita.grid_columnconfigure(1, weight=1)
-
-        campos = [("Idade", "idade"), ("Genero", "genero"), ("Ano academico", "ano"),("Tempo tela", "tela"), ("Horas de sono", "sono"),("Suporte social", "suporte"), ("Pressao provas", "pressao"),("Nivel estresse", "estresse"), ("Nivel ansiedade", "ansiedade"),("Uso de internet", "internet"), ("Performance academica", "performance"),("Expectativa familiar", "familia"), ("Atividade física", "fisica"),("Estresse financeiro", "financeiro"), ("Nivel depressão", "depressao")]
-
+        
+        campos = [
+            ("Idade", "idade"), ("Genero", "genero"), ("Ano academico", "ano"),
+            ("Tempo tela", "tela"), ("Horas de sono", "sono"),
+            ("Suporte social", "suporte"), ("Pressao provas", "pressao"),
+            ("Nivel estresse", "estresse"), ("Nivel ansiedade", "ansiedade"),
+            ("Uso de internet", "internet"), ("Performance academica", "performance"),
+            ("Expectativa familiar", "familia"), ("Atividade física", "fisica"),
+            ("Estresse financeiro", "financeiro"), ("Nivel depressão", "depressao")
+        ]
+        
         self.campos = {}
         linha = coluna = 0
-
+        
         for texto, nome in campos:
             bloco = ctk.CTkFrame(direita, fg_color="transparent")
             bloco.grid(row=linha, column=coluna, padx=10, pady=4, sticky="w")
-            self.campos[nome] = self.criar_campo(bloco, texto)
+            self.campos[nome] = self.criar_campo_pequeno(bloco, texto)
             coluna += 1
             if coluna == 2:
                 coluna = 0
                 linha += 1
-
-        enviar = ctk.CTkButton(painel,text="Enviar dados",width=140,height=45,fg_color=COR_CAMPO,hover_color=COR_HOVER,text_color=COR_TITULO,font=("Arial", 14, "bold"),command=self.enviar_dados)
-        enviar.place(relx=0.85,rely=0.92,anchor="center")
-
-        voltar = ctk.CTkButton(painel,text="Voltar",width=140,height=45,fg_color=COR_CAMPO,hover_color=COR_HOVER,text_color=COR_TITULO,font=("Arial", 14, "bold"),command=self.controlador.mostrar_dev)
-        voltar.place(relx=0.65,rely=0.92,anchor="center")
+        
+        enviar = ctk.CTkButton(
+            painel, text="Enviar dados", width=140, height=45,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
+            font=("Arial", 14, "bold"), command=self.enviar_dados
+        )
+        enviar.place(relx=0.85, rely=0.92, anchor="center")
+        
+        voltar = ctk.CTkButton(
+            painel, text="Voltar", width=140, height=45,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
+            font=("Arial", 14, "bold"), command=self.controlador.mostrar_dev
+        )
+        voltar.place(relx=0.65, rely=0.92, anchor="center")
 
 # ================== TELA ALTERAR SENHA ==================
 
-class TelaAlterarSenha(ctk.CTkFrame):
+class TelaAlterarSenha(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color=COR_CAIXA, corner_radius=6)
         conteudo.grid(row=0, column=1, sticky="nsew", padx=55, pady=55)
         conteudo.grid_columnconfigure(0, weight=1)
-        acesso = ctk.CTkLabel(conteudo, text="Acesso desenvolvedor", font=("Arial",18), text_color=COR_TEXTO)
-        acesso.grid(row=0, column=0, sticky="w", padx=30, pady=(15,0))
-        titulo = ctk.CTkLabel(conteudo, text="Alterar senha do sistema", font=("Arial",36,"bold"), text_color=COR_TITULO)
-        titulo.grid(row=1, column=0, sticky="w", padx=30, pady=(5,60))
+        
+        acesso = ctk.CTkLabel(conteudo, text="Acesso desenvolvedor", font=("Arial", 18), text_color=COR_TEXTO)
+        acesso.grid(row=0, column=0, sticky="w", padx=30, pady=(15, 0))
+        
+        titulo = ctk.CTkLabel(conteudo, text="Alterar senha do sistema", font=("Arial", 36, "bold"), text_color=COR_TITULO)
+        titulo.grid(row=1, column=0, sticky="w", padx=30, pady=(5, 60))
+        
         area = ctk.CTkFrame(conteudo, fg_color="transparent")
         area.grid(row=2, column=0)
-        label = ctk.CTkLabel(area, text="Nova senha:", font=("Arial",22,"bold"), text_color=COR_TEXTO)
-        label.pack(pady=(0,10))
+        
+        label = ctk.CTkLabel(area, text="Nova senha:", font=("Arial", 22, "bold"), text_color=COR_TEXTO)
+        label.pack(pady=(0, 10))
+        
         self.nova_senha = ctk.CTkEntry(area, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
         self.nova_senha.pack()
-        redefinir = ctk.CTkButton(area, text="Redefinir senha", width=170, height=45, corner_radius=12, fg_color=COR_TITULO, hover_color=COR_HOVER, text_color=COR_TEXTO_BOTAO, font=("Arial",18,"bold"), command=self.alterar_senha)
+        
+        redefinir = ctk.CTkButton(
+            area, text="Redefinir senha", width=170, height=45,
+            corner_radius=12, fg_color=COR_TITULO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO_BOTAO, font=("Arial", 18, "bold"),
+            command=self.alterar_senha
+        )
         redefinir.pack(pady=18)
-        voltar = ctk.CTkButton(conteudo, text="Voltar", width=140, height=45, corner_radius=10, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial",18,"bold"), command=self.controlador.mostrar_dev)
+        
+        voltar = ctk.CTkButton(
+            conteudo, text="Voltar", width=140, height=45,
+            corner_radius=10, fg_color=COR_CAMPO, hover_color=COR_HOVER,
+            text_color=COR_TEXTO, font=("Arial", 18, "bold"),
+            command=self.controlador.mostrar_dev
+        )
         voltar.place(relx=0.98, rely=0.96, anchor="se")
-
+    
     def alterar_senha(self):
         senha = self.nova_senha.get()
         print("Nova senha:", senha)
-        
+
 # ================== TELA PRINCIPAL ==================
 
-class TelaPrincipal(ctk.CTkFrame):
+class TelaPrincipal(TelaBase):
     def __init__(self, master, controlador):
-        super().__init__(master, fg_color=COR_FUNDO)
-        self.controlador = controlador
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=1)
-        self.criar_barra()
+        super().__init__(master, controlador)
         self.criar_conteudo()
-
-    def criar_barra(self):
-        barra = ctk.CTkFrame(self, width=55, fg_color="transparent", corner_radius=0)
-        barra.grid(row=0, column=0, sticky="ns")
-        barra.grid_propagate(False)
-        for i, cor in enumerate(PALETA):
-            barra.grid_rowconfigure(i, weight=1)
-            faixa = ctk.CTkFrame(barra, fg_color=cor, corner_radius=0)
-            faixa.grid(row=i, column=0, sticky="nsew")
-
+    
     def criar_lista_habitos(self, parent):
         caixa = ctk.CTkFrame(parent, width=310, height=350, fg_color=COR_CAIXA, corner_radius=5)
         caixa.pack(pady=0, padx=10)
         caixa.pack_propagate(False)
-        titulo = ctk.CTkLabel(caixa, text="Meus hábitos", font=("Arial",22), text_color=COR_TEXTO)
-        titulo.pack(anchor="w", padx=40, pady=(15,10))
-        habitos = ["Dormir cedo", "Atividade física", "Leitura", "Meditação"]
-        for h in habitos:
-            if h == 'Dormir cedo':
-                comando = self.controlador.mostrar_dormir
-            elif h == "Atividade física":
-                comando = self.controlador.mostrar_atividade_fisica
-            elif h =='Leitura':
-                comando = self.controlador.mostrar_leitura
-            elif h =="Meditação":
-                comando = self.controlador.mostrar_meditacao
-            else: 
-                comando = None
-            botao = ctk.CTkButton(caixa, text=h, width=240, height=45, corner_radius=8, fg_color=COR_FUNDO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial",18), command=comando)
+        
+        titulo = ctk.CTkLabel(caixa, text="Meus hábitos", font=("Arial", 22), text_color=COR_TEXTO)
+        titulo.pack(anchor="w", padx=40, pady=(15, 10))
+        
+        botoes_habitos = [
+            ("Dormir cedo", self.controlador.mostrar_dormir),
+            ("Atividade física", self.controlador.mostrar_atividade_fisica),
+            ("Leitura", self.controlador.mostrar_leitura),
+            ("Meditação", self.controlador.mostrar_meditacao)
+        ]
+        
+        for texto, comando in botoes_habitos:
+            botao = ctk.CTkButton(
+                caixa, text=texto, width=240, height=45, corner_radius=8,
+                fg_color=COR_FUNDO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+                font=("Arial", 18), command=comando
+            )
             botao.pack(pady=6)
-
+    
     def criar_botoes(self, parent):
-        botoes = ["O que é o Burnout?", "Prever se estou em risco de Burnout", "Desenvolver um novo hábito", "Acessar conquistas", "Registro de atividades"]
-        for texto in botoes:
-            if texto == "O que é o Burnout?":
-                comando = self.controlador.mostrar_burnout
-            elif texto == "Prever se estou em risco de Burnout":
-                comando = self.controlador.mostrar_resultado
-            elif texto == 'Desenvolver um novo hábito':
-                comando = self.controlador.mostrar_habitos
-            elif texto == "Acessar conquistas":
-                comando = self.controlador.mostrar_conquistas
-            elif texto == "Registro de atividades":
-                comando = self.controlador.mostrar_atividades
-            else:
-                comando = None
-            botao = ctk.CTkButton(parent, text=texto, width=430, height=50, corner_radius=5, fg_color=COR_TITULO, hover_color=COR_HOVER, text_color="#FFD7C5", font=("Arial",20,"bold"), command=comando)
+        botoes = [
+            ("O que é o Burnout?", self.controlador.mostrar_burnout),
+            ("Prever se estou em risco de Burnout", self.controlador.mostrar_resultado),
+            ("Desenvolver um novo hábito", self.controlador.mostrar_habitos),
+            ("Acessar conquistas", self.controlador.mostrar_conquistas),
+            ("Registro de atividades", self.controlador.mostrar_atividades)
+        ]
+        
+        for texto, comando in botoes:
+            botao = ctk.CTkButton(
+                parent, text=texto, width=430, height=50, corner_radius=5,
+                fg_color=COR_TITULO, hover_color=COR_HOVER, text_color="#FFD7C5",
+                font=("Arial", 20, "bold"), command=comando
+            )
             botao.pack(pady=6)
-
+    
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=25, pady=15)
-        conteudo.grid_columnconfigure((0,1), weight=1)
-        titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial",40,"bold"), text_color=COR_TITULO)
+        conteudo.grid_columnconfigure((0, 1), weight=1)
+        
+        titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 40, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2, sticky="w")
-        subtitulo = ctk.CTkLabel(conteudo, text="Seja bem vindo!", font=("Arial",20), text_color=COR_TEXTO)
+        
+        subtitulo = ctk.CTkLabel(conteudo, text="Seja bem vindo!", font=("Arial", 20), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, sticky="w")
-        pergunta = ctk.CTkLabel(conteudo, text="O que você deseja fazer?", font=("Arial",22,"bold"), text_color=COR_TEXTO)
+        
+        pergunta = ctk.CTkLabel(conteudo, text="O que você deseja fazer?", font=("Arial", 22, "bold"), text_color=COR_TEXTO)
         pergunta.grid(row=2, column=0, pady=15, sticky="w")
+        
         esquerda = ctk.CTkFrame(conteudo, fg_color="transparent")
-        esquerda.grid(row=3, column=0, padx=(0,20), sticky="nw")
+        esquerda.grid(row=3, column=0, padx=(0, 20), sticky="nw")
+        
         direita = ctk.CTkFrame(conteudo, fg_color="transparent")
-        direita.grid(row=3, column=1, padx=(20,0), sticky="nw")
+        direita.grid(row=3, column=1, padx=(20, 0), sticky="nw")
+        
         self.criar_lista_habitos(esquerda)
         self.criar_botoes(direita)
-        sair = ctk.CTkButton(conteudo, text="Sair", width=80, height=30, corner_radius=10, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 14, "bold"), command=self.controlador.mostrar_inicial)
+        
+        sair = ctk.CTkButton(
+            conteudo, text="Sair", width=80, height=30, corner_radius=10,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 14, "bold"), command=self.controlador.mostrar_inicial
+        )
         sair.place(relx=0.98, rely=1, anchor="se")
-        configuracoes = ctk.CTkButton(conteudo, text="⏣", height=30,width=30, corner_radius=10, fg_color=COR_FUNDO,bg_color=COR_FUNDO,hover_color=COR_CAIXA, text_color=COR_TEXTO, font=("Arial", 40, "bold"), command=self.controlador.mostrar_configuracao)
-        configuracoes.place(relx=1.0, x=-10, y=10, anchor="ne")  
+        
+        configuracoes = ctk.CTkButton(
+            conteudo, text="⏣", height=30, width=30, corner_radius=10,
+            fg_color=COR_FUNDO, bg_color=COR_FUNDO, hover_color=COR_CAIXA,
+            text_color=COR_TEXTO, font=("Arial", 40, "bold"),
+            command=self.controlador.mostrar_configuracao
+        )
+        configuracoes.place(relx=1.0, x=-10, y=10, anchor="ne")
 
 # ================== CONTROLADOR ==================
 
@@ -1458,37 +1357,37 @@ class App(ctk.CTk):
         self.resizable(False, False)
         self.tela_atual = None
         self.mostrar_inicial()
-
+    
     def mostrar_tela(self, tela_classe):
         if self.tela_atual:
             self.tela_atual.destroy()
         self.tela_atual = tela_classe(self, self)
         self.tela_atual.pack(fill="both", expand=True)
-
+    
     def mostrar_inicial(self):
         self.mostrar_tela(TelaInicial)
-
+    
     def mostrar_login(self):
         self.mostrar_tela(TelaLogin)
-
+    
     def mostrar_cadastro(self):
         self.mostrar_tela(TelaCadastro)
-
+    
     def mostrar_caracterizacao1(self):
         self.mostrar_tela(TelaCaracterizacao1)
-
+    
     def mostrar_caracterizacao2(self):
         self.mostrar_tela(TelaCaracterizacao2)
-
+    
     def mostrar_burnout(self):
         self.mostrar_tela(TelaBurnout)
-
+    
     def mostrar_resultado(self):
         self.mostrar_tela(TelaResultado)
     
     def mostrar_habitos(self):
         self.mostrar_tela(TelaHabitos)
-        
+    
     def mostrar_conquistas(self):
         self.mostrar_tela(TelaConquistas)
     
@@ -1509,34 +1408,37 @@ class App(ctk.CTk):
     
     def mostrar_configuracao(self):
         self.mostrar_tela(TelaConfiguracao)
-        
+    
     def mostrar_senha_mod(self):
         self.mostrar_tela(TelaSenhaMod)
-        
+    
     def mostrar_mod(self):
         self.mostrar_tela(TelaMod)
-        
+    
     def mostrar_senha_dev(self):
         self.mostrar_tela(TelaSenhaDev)
-     
+    
     def mostrar_dev(self):
         self.mostrar_tela(TelaDev)
     
-    def mostar_excluir(self):
+    def mostrar_excluir(self):  # NOME CORRIGIDO (antes estava "mostar_excluir")
         self.mostrar_tela(TelaExcluirUsuario)
     
     def mostrar_adicionar(self):
         self.mostrar_tela(TelaAdicionarUsuario)
-           
+    
     def mostrar_mudar_senha(self):
         self.mostrar_tela(TelaAlterarSenha)
     
     def mostrar_principal(self):
         self.mostrar_tela(TelaPrincipal)
-        
+
 # ================== EXECUÇÃO ==================
 
 if __name__ == "__main__":
     app = App()
-    app.iconbitmap("icone.ico")
+    try:
+        app.iconbitmap("icone.ico")
+    except:
+        pass
     app.mainloop()

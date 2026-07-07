@@ -297,9 +297,9 @@ class Usuario (AtividadeMixin):
         self.sistema.atualizar_sistema(self)
         return ModeloIA().prever(self.caracteristicas)
 
-    def adicionar_conquista(self, nome):
-        self.conquistas.append(Conquista(nome))
-        self.atividades.append(self.registrar_atividade(f'obteve a conquista {nome}'))
+    def adicionar_conquista(self, conquista):
+        self.conquistas.append(Conquista(conquista))
+        self.atividades.append(self.registrar_atividade(f'obteve a conquista {conquista}'))
         self.sistema.atualizar_sistema(self)
     
     def adicionar_habito(self,habito):
