@@ -204,6 +204,8 @@ class Caracterizacao:
             self.__expectativa_familiar = valor
             return True
         return False
+    def __str__(self):
+        return str([self.dados_factuais.idade,self.dados_factuais.genero,self.dados_factuais.ano_academico,self.horas_estudo_dia,self.pressao_provas,self.performance_academica,self.nivel_estresse,self.nivel_ansiedade,self.nivel_depressao,self.horas_sono,self.atividade_fisica,self.suporte_social,self.tempo_tela,self.uso_internet,self.estresse_financeiro,self.expectativa_familiar])
 
 class ModeloIA():
     def prever(self,dados):
@@ -229,7 +231,7 @@ class Habito (abc.ABC):
 class DormirCedo(Habito):
     nome = 'dormir cedo'
     def motivar(self):
-        return random.choice(["Dormir cedo hoje é investir em uma versão mais forte de você amanhã.","Seu corpo precisa de descanso tanto quanto sua mente precisa de foco.","Quem dorme cedo não perde tempo — ganha energia.","A disciplina de hoje é o sucesso de amanhã começando no seu sono.","Desligar agora é escolher acordar melhor depois.","Não é sobre dormir menos, é sobre viver melhor.","A noite bem dormida é o primeiro passo de um dia produtivo.","Seu futuro agradece cada hora de sono que você respeita hoje."])
+        return random.choice(["Dormir cedo hoje é investir em uma versao mais forte de você amanha.","Seu corpo precisa de descanso tanto quanto sua mente precisa de foco.","Quem dorme cedo nao perde tempo — ganha energia.","A disciplina de hoje é o sucesso de amanha começando no seu sono.","Desligar agora é escolher acordar melhor depois.","Nao é sobre dormir menos, é sobre viver melhor.","A noite bem dormida é o primeiro passo de um dia produtivo.","Seu futuro agradece cada hora de sono que você respeita hoje."])
     
     def calular_sono(self,inicio,fim):
         t1 = datetime.strptime(inicio,"%H:%M")
@@ -241,21 +243,21 @@ class DormirCedo(Habito):
 class AtividadeFisica (Habito):
     nome = 'atividade fisica'
     def motivar(self):
-        return random.choice(["Seu corpo pode até pedir para parar, mas sua mente decide continuar.","Um treino hoje é um passo a menos em direção à sua melhor versão.","Disciplina vence a motivação quando a vontade acaba.","Você não treina só o corpo, treina a mente também.","O esforço de hoje é o resultado de amanhã.","Não espere sentir vontade, crie o hábito.","Cada gota de suor te aproxima do seu objetivo.","O limite começa onde sua determinação acaba.","Treinar é investir em você mesmo.","Você é mais forte do que a desculpa que tentou te parar."])
+        return random.choice(["Seu corpo pode até pedir para parar, mas sua mente decide continuar.","Um treino hoje é um passo a menos em direçao à sua melhor versao.","Disciplina vence a motivaçao quando a vontade acaba.","Você nao treina só o corpo, treina a mente também.","O esforço de hoje é o resultado de amanha.","Nao espere sentir vontade, crie o hábito.","Cada gota de suor te aproxima do seu objetivo.","O limite começa onde sua determinaçao acaba.","Treinar é investir em você mesmo.","Você é mais forte do que a desculpa que tentou te parar."])
     def calcular_IMC(self,peso,altura):
         return peso/(altura**2)
 
 class Leitura (Habito):
     nome = 'leitura'
     def motivar(self):
-        return random.choice(["Quem lê vive mil vidas em uma só.", "Ler é treinar a mente para enxergar o mundo de outra forma.", "Um livro por dia afasta a ignorância para sempre.", "A leitura abre portas que a realidade ainda não mostrou.", "Quem lê nunca está sozinho.", "Cada página lida é um passo no seu crescimento.", "Livros são academias para a mente.", "Ler hoje é pensar melhor amanhã.", "A leitura transforma curiosidade em conhecimento.", "Quanto mais você lê, mais você entende o mundo."])
+        return random.choice(["Quem lê vive mil vidas em uma só.", "Ler é treinar a mente para enxergar o mundo de outra forma.", "Um livro por dia afasta a ignorância para sempre.", "A leitura abre portas que a realidade ainda nao mostrou.", "Quem lê nunca está sozinho.", "Cada página lida é um passo no seu crescimento.", "Livros sao academias para a mente.", "Ler hoje é pensar melhor amanha.", "A leitura transforma curiosidade em conhecimento.", "Quanto mais você lê, mais você entende o mundo."])
     def calcular_media(self,paginas,dias):
         return paginas/dias
     
 class Meditacao (Habito):
     nome = 'meditacao'
     def motivar(self):
-        return random.choice(["Respire fundo e permita que sua mente encontre a calma.", "Cada respiração é uma oportunidade de recomeçar.", "O silêncio interior é uma fonte inesgotável de força.", "Você não precisa controlar tudo; apenas esteja presente.", "A paz que você procura já existe dentro de você.", "Deixe os pensamentos passarem como nuvens no céu.", "Seu bem-estar começa com um momento de atenção plena.", "Respire tranquilidade, expire preocupações.", "A serenidade cresce quando você desacelera."])
+        return random.choice(["Respire fundo e permita que sua mente encontre a calma.", "Cada respiraçao é uma oportunidade de recomeçar.", "O silêncio interior é uma fonte inesgotável de força.", "Você nao precisa controlar tudo; apenas esteja presente.", "A paz que você procura já existe dentro de você.", "Deixe os pensamentos passarem como nuvens no céu.", "Seu bem-estar começa com um momento de atençao plena.", "Respire tranquilidade, expire preocupações.", "A serenidade cresce quando você desacelera."])
     def calcular_tempo_meditacao(self,inicio,fim):
         t1 = datetime.strptime(inicio,"%H:%M")
         t2 = datetime.strptime(fim,"%H:%M")
@@ -283,6 +285,18 @@ class Usuario (AtividadeMixin):
         self.atividades.append(self.registrar_atividade('criou conta'))
         sistema= sistema+self
         
+    def listar_habitos(self):
+        lista = []
+        for h in self.habitos:
+            lista.append(h.nome)
+        return str(lista)
+    
+    def listar_conquistas(self):
+        lista = []
+        for c in self.conquistas:
+            lista.append(c.nome)
+        return str(lista)
+        
     @property
     def senha(self):
         return self.__senha
@@ -293,7 +307,7 @@ class Usuario (AtividadeMixin):
             self.__senha = nova_senha
 
     def prever(self):
-        self.atividades.append(self.registrar_atividade('fez previsão com RandomForest'))
+        self.atividades.append(self.registrar_atividade('fez previsao com RandomForest'))
         self.sistema.atualizar_sistema(self)
         return ModeloIA().prever(self.caracteristicas)
 
@@ -330,7 +344,7 @@ class Sistema:
                 if linha[0].lower() != usuario.nome.lower():
                     lista_nova.append(linha)
                 else:
-                    lista_nova.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),str(usuario.habitos),str(usuario.conquistas)])
+                    lista_nova.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
         with open('usuarios.csv','w', newline='') as arquivo:
             escritor = csv.writer(arquivo)
             escritor.writerows(lista_nova)
@@ -338,8 +352,8 @@ class Sistema:
     def __add__(self, usuario):
         with open('usuarios.csv',"a", newline='') as usuarios:
             escritor = csv.writer(usuarios)
-            escritor.writerow([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),str(usuario.habitos),str(usuario.conquistas)])
-        self.usuarios.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),str(usuario.habitos),str(usuario.conquistas)])
+            escritor.writerow([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
+        self.usuarios.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
         return self
     
     def __sub__(self, usuario):
@@ -410,3 +424,191 @@ class Mod(Usuario,AcessarSistema):
     def senha(self,nova_senha):
         if len(nova_senha) >=8:
             Mod.__senha_mod = nova_senha
+
+
+# ==========================
+# Sistema
+# ==========================
+
+sistema = Sistema("DemetriosMelhorProfessor")
+
+# ==========================
+# Dados Factuais
+# ==========================
+
+dados_clara = DadosFactuais(18, "Female", 2)
+dados_joao = DadosFactuais(20, "Male", 4)
+dados_mia = DadosFactuais(19, "Female", 3)
+
+# ==========================
+# Caracterizações
+# ==========================
+
+carac_clara = Caracterizacao(
+    dados_clara,
+    4.5,
+    6.0,
+    8.5,
+    5.0,
+    4.0,
+    2.0,
+    7.5,
+    4.0,
+    8.0,
+    5.0,
+    6.0,
+    3.0,
+    7.0
+)
+
+carac_joao = Caracterizacao(
+    dados_joao,
+    8.0,
+    9.0,
+    7.5,
+    9.0,
+    8.0,
+    6.5,
+    5.5,
+    2.0,
+    5.0,
+    9.0,
+    8.0,
+    8.5,
+    9.0
+)
+
+carac_mia = Caracterizacao(
+    dados_mia,
+    3.5,
+    4.0,
+    9.0,
+    3.0,
+    2.0,
+    1.0,
+    8.5,
+    6.0,
+    9.0,
+    4.0,
+    5.0,
+    2.0,
+    5.0
+)
+
+# ==========================
+# Usuários
+# ==========================
+
+clara = Usuario("Clara", "12345678", carac_clara, sistema)
+joao = Usuario("Joao", "12345678", carac_joao, sistema)
+mia = Usuario("Mia", "12345678", carac_mia, sistema)
+
+# ==========================
+# Desenvolvedor e Moderador
+# ==========================
+
+dev = Dev(
+    "Roberto",
+    "DevDoSistema",
+    carac_clara,
+    sistema
+)
+
+mod = Mod(
+    "Carlos",
+    "ModDoSistema",
+    carac_mia,
+    sistema
+)
+
+# ==========================
+# Hábitos
+# ==========================
+
+dormir = DormirCedo()
+atividade = AtividadeFisica()
+leitura = Leitura()
+meditacao = Meditacao()
+
+print("\n========== TESTE DOS HÁBITOS ==========")
+
+print(dormir.motivar())
+print(atividade.motivar())
+print(leitura.motivar())
+print(meditacao.motivar())
+
+print("\n========== TESTE DOS CÁLCULOS ==========")
+
+print("Sono:", dormir.calular_sono("23:30", "07:15"))
+print("IMC:", atividade.calcular_IMC(65, 1.70))
+print("Média leitura:", leitura.calcular_media(320, 8))
+print("Tempo meditaçao:", meditacao.calcular_tempo_meditacao("18:30", "19:00"))
+
+print("\n========== TESTE DO MIXIN ==========")
+
+print(clara.registrar_atividade("entrou no sistema"))
+
+print("\n========== TESTE DAS CONQUISTAS ==========")
+
+clara.adicionar_conquista("Primeiro Login")
+clara.adicionar_conquista("Primeira Previsao")
+
+print("Conquistas:")
+for c in clara.conquistas:
+    print(c.nome)
+
+print("\nAtividades:")
+for a in clara.atividades:
+    print(a)
+
+print("\n========== TESTE DOS HÁBITOS DO USUÁRIO ==========")
+
+clara.adicionar_habito(dormir)
+clara.adicionar_habito(atividade)
+clara.adicionar_habito(leitura)
+clara.adicionar_habito(meditacao)
+
+print("Hábitos cadastrados:")
+
+for h in clara.habitos:
+    print(h.nome)
+
+print("\n========== TESTE DA IA ==========")
+
+print("Clara:")
+print(clara.prever())
+
+print("Joao:")
+print(joao.prever())
+
+print("\n========== TESTE DO MOD ==========")
+
+print(mod.listar_usuarios(sistema))
+
+print("\n========== TESTE DO DEV ==========")
+
+print(dev.listar_usuarios(sistema))
+
+print("\nRemovendo Joao...")
+dev.excluir_usuario(sistema, joao)
+
+print("Usuários após remoçao:")
+print(mod.listar_usuarios(sistema))
+
+print("\n========== TESTE FINAL ==========")
+
+clara.adicionar_conquista("Usuário Iniciante")
+
+print(clara.prever())
+
+print(dormir.motivar())
+print(dormir.calular_sono("22:45", "06:30"))
+print(atividade.calcular_IMC(72, 1.78))
+print(leitura.calcular_media(450, 15))
+print(meditacao.calcular_tempo_meditacao("19:00", "19:40"))
+
+print("\nUsuários do moderador:")
+print(mod.listar_usuarios(sistema))
+
+print("\nUsuários do desenvolvedor:")
+print(dev.listar_usuarios(sistema))

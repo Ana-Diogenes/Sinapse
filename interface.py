@@ -17,9 +17,7 @@ ctk.set_default_color_theme("blue")
 
 # ================== CLASSE BASE ==================
 
-class TelaBase(ctk.CTkFrame):
-    """Classe base para todas as telas, contendo a barra lateral e métodos comuns"""
-    
+class TelaBase(ctk.CTkFrame): 
     def __init__(self, master, controlador, largura_barra=55):
         super().__init__(master, fg_color=COR_FUNDO)
         self.controlador = controlador
@@ -30,7 +28,6 @@ class TelaBase(ctk.CTkFrame):
         self.criar_barra()
     
     def criar_barra(self):
-        """Cria a barra lateral com as cores da paleta"""
         barra = ctk.CTkFrame(self, width=self.largura_barra, fg_color="transparent", corner_radius=0)
         barra.grid(row=0, column=0, sticky="ns")
         barra.grid_propagate(False)
@@ -44,7 +41,6 @@ class TelaBase(ctk.CTkFrame):
             faixa.grid(row=i, column=0, sticky="nsew")
     
     def criar_campo(self, parent, texto, ocultar=False, largura=490):
-        """Cria um campo de entrada com label"""
         frame = ctk.CTkFrame(parent, fg_color="transparent")
         frame.pack(fill="x", pady=(0, 22))
         
@@ -224,7 +220,6 @@ class TelaCadastro(TelaBase):
 # ================== TELA CARACTERIZAÇÃO ==================
 
 class TelaCaracterizacaoBase(TelaBase):
-    """Classe base para as telas de caracterização"""
     
     def __init__(self, master, controlador, largura_barra=40):
         super().__init__(master, controlador, largura_barra)
@@ -347,11 +342,11 @@ class TelaCaracterizacao2(TelaCaracterizacaoBase):
         avancar = ctk.CTkButton(
             conteudo, text=">", width=30, height=30, corner_radius=35,
             fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
-            font=("Arial", 28, "bold"), command=self.pegar_info
+            font=("Arial", 28, "bold"), command=self.pegar_dados
         )
         avancar.place(relx=0.98, rely=0.97, anchor="se")
     
-    def pegar_info(self):
+    def pegar_dados(self):
         dados = [
             self.depressao.get(), self.sono.get(), self.atividade.get(),
             self.suporte.get(), self.tela.get(), self.internet.get(),
@@ -661,7 +656,6 @@ Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacu
 # ================== TELA CALCULOS (DORMIR, ATIVIDADE FISICA, LEITURA, MEDITACAO) ==================
 
 class TelaCalculoBase(TelaBase):
-    """Classe base para telas de cálculo (Dormir, Atividade Física, Leitura, Meditação)"""
     
     def __init__(self, master, controlador, titulo, frase, subtitulo, label1, label2, placeholder1, placeholder2):
         super().__init__(master, controlador)
@@ -737,7 +731,6 @@ class TelaCalculoBase(TelaBase):
         sair.pack(anchor="e", pady=15)
     
     def calcular(self):
-        """Método a ser sobrescrito pelas subclasses"""
         pass
 
 class TelaDormirCedo(TelaCalculoBase):
@@ -874,13 +867,11 @@ class TelaConfiguracao(TelaBase):
 # ================== TELA SENHA (MOD e DEV) ==================
 
 class TelaSenhaBase(TelaBase):
-    """Classe base para telas de senha (Moderador e Desenvolvedor)"""
-    
     def __init__(self, master, controlador, texto_instrucao, comando_verificar):
-        super().__init__(master, controlador)  # Primeiro chama o super
+        super().__init__(master, controlador)
         self.comando_verificar = comando_verificar
         self.texto_instrucao = texto_instrucao
-        self.criar_conteudo()  # Depois cria o conteúdo
+        self.criar_conteudo()  
     
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
@@ -911,7 +902,7 @@ class TelaSenhaBase(TelaBase):
     
     def verificar_senha(self):
         print(self.senha.get())
-        self.comando_verificar()  # Agora comando_verificar é um método que será chamado
+        self.comando_verificar() 
 
 class TelaSenhaMod(TelaSenhaBase):
     def __init__(self, master, controlador):
@@ -1421,7 +1412,7 @@ class App(ctk.CTk):
     def mostrar_dev(self):
         self.mostrar_tela(TelaDev)
     
-    def mostrar_excluir(self):  # NOME CORRIGIDO (antes estava "mostar_excluir")
+    def mostrar_excluir(self):  
         self.mostrar_tela(TelaExcluirUsuario)
     
     def mostrar_adicionar(self):
