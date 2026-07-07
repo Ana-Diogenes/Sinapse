@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 import random
 from datetime import datetime
 import csv
-
+import ast
 
 class DadosFactuais:
     def __init__(self,idade,genero,ano_academico):
@@ -274,7 +274,7 @@ class Conquista:
         self.nome = nome
 
 class Usuario (AtividadeMixin):
-    def __init__(self,nome, senha, caracterizacao,sistema):
+    def __init__(self,nome, senha, caracterizacao,sistema,novo = True):
         self.sistema = sistema
         self.nome = nome
         self.__senha = senha
@@ -283,7 +283,8 @@ class Usuario (AtividadeMixin):
         self.habitos = []
         self.conquistas = []
         self.atividades.append(self.registrar_atividade('criou conta'))
-        sistema= sistema+self
+        if novo:
+            sistema.__add__(self)
         
     def listar_habitos(self):
         lista = []
@@ -348,6 +349,26 @@ class Sistema:
         with open('usuarios.csv','w', newline='') as arquivo:
             escritor = csv.writer(arquivo)
             escritor.writerows(lista_nova)
+            
+    def procurar_usuario(self,nome,senha):
+        for user in self.usuarios:
+            if user[0] == nome and user[1]==senha:
+                lista = ast.literal_eval(user[2])
+                usuario = Usuario(user[0],user[1],Caracterizacao(DadosFactuais(lista[0],lista[1],lista[2]),float(lista[3]),float(lista[4]),float(lista[5]),float(lista[6]),float(lista[7]),float(lista[8]),float(lista[9]),float(lista[10]),float(lista[11]),float(lista[12]),float(lista[13]),float(lista[14]),float(lista[15])),self,False)
+                usuario.atividades = ast.literal_eval(user[3])
+                for h in ast.literal_eval(user[4]):
+                    if h == "dormir cedo":
+                        usuario.habitos.append(DormirCedo())
+                    elif h == "atividade fisica":
+                        usuario.habitos.append(AtividadeFisica())
+                    elif h == "leitura":
+                        usuario.habitos.append(Leitura())
+                    elif h == "meditacao":
+                        usuario.habitos.append(Meditacao())
+                usuario.conquistas = ast.literal_eval(user[5])
+                return usuario
+        return False
+            
             
     def __add__(self, usuario):
         with open('usuarios.csv',"a", newline='') as usuarios:
@@ -425,190 +446,3 @@ class Mod(Usuario,AcessarSistema):
         if len(nova_senha) >=8:
             Mod.__senha_mod = nova_senha
 
-
-# ==========================
-# Sistema
-# ==========================
-
-sistema = Sistema("DemetriosMelhorProfessor")
-
-# ==========================
-# Dados Factuais
-# ==========================
-
-dados_clara = DadosFactuais(18, "Female", 2)
-dados_joao = DadosFactuais(20, "Male", 4)
-dados_mia = DadosFactuais(19, "Female", 3)
-
-# ==========================
-# Caracterizações
-# ==========================
-
-carac_clara = Caracterizacao(
-    dados_clara,
-    4.5,
-    6.0,
-    8.5,
-    5.0,
-    4.0,
-    2.0,
-    7.5,
-    4.0,
-    8.0,
-    5.0,
-    6.0,
-    3.0,
-    7.0
-)
-
-carac_joao = Caracterizacao(
-    dados_joao,
-    8.0,
-    9.0,
-    7.5,
-    9.0,
-    8.0,
-    6.5,
-    5.5,
-    2.0,
-    5.0,
-    9.0,
-    8.0,
-    8.5,
-    9.0
-)
-
-carac_mia = Caracterizacao(
-    dados_mia,
-    3.5,
-    4.0,
-    9.0,
-    3.0,
-    2.0,
-    1.0,
-    8.5,
-    6.0,
-    9.0,
-    4.0,
-    5.0,
-    2.0,
-    5.0
-)
-
-# ==========================
-# Usuários
-# ==========================
-
-clara = Usuario("Clara", "12345678", carac_clara, sistema)
-joao = Usuario("Joao", "12345678", carac_joao, sistema)
-mia = Usuario("Mia", "12345678", carac_mia, sistema)
-
-# ==========================
-# Desenvolvedor e Moderador
-# ==========================
-
-dev = Dev(
-    "Roberto",
-    "DevDoSistema",
-    carac_clara,
-    sistema
-)
-
-mod = Mod(
-    "Carlos",
-    "ModDoSistema",
-    carac_mia,
-    sistema
-)
-
-# ==========================
-# Hábitos
-# ==========================
-
-dormir = DormirCedo()
-atividade = AtividadeFisica()
-leitura = Leitura()
-meditacao = Meditacao()
-
-print("\n========== TESTE DOS HÁBITOS ==========")
-
-print(dormir.motivar())
-print(atividade.motivar())
-print(leitura.motivar())
-print(meditacao.motivar())
-
-print("\n========== TESTE DOS CÁLCULOS ==========")
-
-print("Sono:", dormir.calular_sono("23:30", "07:15"))
-print("IMC:", atividade.calcular_IMC(65, 1.70))
-print("Média leitura:", leitura.calcular_media(320, 8))
-print("Tempo meditaçao:", meditacao.calcular_tempo_meditacao("18:30", "19:00"))
-
-print("\n========== TESTE DO MIXIN ==========")
-
-print(clara.registrar_atividade("entrou no sistema"))
-
-print("\n========== TESTE DAS CONQUISTAS ==========")
-
-clara.adicionar_conquista("Primeiro Login")
-clara.adicionar_conquista("Primeira Previsao")
-
-print("Conquistas:")
-for c in clara.conquistas:
-    print(c.nome)
-
-print("\nAtividades:")
-for a in clara.atividades:
-    print(a)
-
-print("\n========== TESTE DOS HÁBITOS DO USUÁRIO ==========")
-
-clara.adicionar_habito(dormir)
-clara.adicionar_habito(atividade)
-clara.adicionar_habito(leitura)
-clara.adicionar_habito(meditacao)
-
-print("Hábitos cadastrados:")
-
-for h in clara.habitos:
-    print(h.nome)
-
-print("\n========== TESTE DA IA ==========")
-
-print("Clara:")
-print(clara.prever())
-
-print("Joao:")
-print(joao.prever())
-
-print("\n========== TESTE DO MOD ==========")
-
-print(mod.listar_usuarios(sistema))
-
-print("\n========== TESTE DO DEV ==========")
-
-print(dev.listar_usuarios(sistema))
-
-print("\nRemovendo Joao...")
-dev.excluir_usuario(sistema, joao)
-
-print("Usuários após remoçao:")
-print(mod.listar_usuarios(sistema))
-
-print("\n========== TESTE FINAL ==========")
-
-clara.adicionar_conquista("Usuário Iniciante")
-
-print(clara.prever())
-
-print(dormir.motivar())
-print(dormir.calular_sono("22:45", "06:30"))
-print(atividade.calcular_IMC(72, 1.78))
-print(leitura.calcular_media(450, 15))
-print(meditacao.calcular_tempo_meditacao("19:00", "19:40"))
-
-print("\nUsuários do moderador:")
-print(mod.listar_usuarios(sistema))
-
-print("\nUsuários do desenvolvedor:")
-print(dev.listar_usuarios(sistema))

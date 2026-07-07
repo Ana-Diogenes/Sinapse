@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import lib
 
 # ================== CORES ==================
 
@@ -133,9 +134,12 @@ class TelaLogin(TelaBase):
         voltar.place(relx=0, rely=1, anchor="sw", x=10, y=-5)
     
     def fazer_login(self):
-        print("Nome:", self.nome.get())
-        print("Senha:", self.senha.get())
-        self.controlador.mostrar_principal()
+        usuario_encontrado = sistema.procurar_usuario(self.nome.get(), self.senha.get())
+        if usuario_encontrado:
+            self.controlador.usuario_atual = usuario_encontrado  
+            self.controlador.mostrar_principal()
+        else:
+            print("Usuário ou senha inválidos")
 
 # ================== TELA CADASTRO ==================
 
@@ -1258,6 +1262,7 @@ class TelaAlterarSenha(TelaBase):
 class TelaPrincipal(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_lista_habitos(self, parent):
@@ -1268,20 +1273,28 @@ class TelaPrincipal(TelaBase):
         titulo = ctk.CTkLabel(caixa, text="Meus hábitos", font=("Arial", 22), text_color=COR_TEXTO)
         titulo.pack(anchor="w", padx=40, pady=(15, 10))
         
-        botoes_habitos = [
-            ("Dormir cedo", self.controlador.mostrar_dormir),
-            ("Atividade física", self.controlador.mostrar_atividade_fisica),
-            ("Leitura", self.controlador.mostrar_leitura),
-            ("Meditação", self.controlador.mostrar_meditacao)
-        ]
+        botoes_habitos = []
         
-        for texto, comando in botoes_habitos:
-            botao = ctk.CTkButton(
-                caixa, text=texto, width=240, height=45, corner_radius=8,
-                fg_color=COR_FUNDO, hover_color=COR_HOVER, text_color=COR_TEXTO,
-                font=("Arial", 18), command=comando
-            )
-            botao.pack(pady=6)
+        for h in self.usuario.habitos:
+            if h.nome == 'dormir cedo':
+                botoes_habitos.append(("Dormir cedo", self.controlador.mostrar_dormir))
+            elif h.nome == 'atividade fisica':
+                botoes_habitos.append(("Atividade física", self.controlador.mostrar_atividade_fisica))
+            elif h.nome == 'leitura':
+                botoes_habitos.append(("Leitura", self.controlador.mostrar_leitura))
+            elif h.nome == 'meditacao':
+                botoes_habitos.append(("Meditação", self.controlador.mostrar_meditacao))
+        if len(botoes_habitos)>0:
+            for texto, comando in botoes_habitos:
+                botao = ctk.CTkButton(
+                    caixa, text=texto, width=240, height=45, corner_radius=8,
+                    fg_color=COR_FUNDO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+                    font=("Arial", 18), command=comando
+                )
+                botao.pack(pady=6)
+        else:
+            mensagem = ctk.CTkLabel(caixa, text="Nenhum hábito cadastrado", font=("Arial", 14), text_color=COR_TEXTO)
+            mensagem.pack(pady=30)
     
     def criar_botoes(self, parent):
         botoes = [
@@ -1308,7 +1321,7 @@ class TelaPrincipal(TelaBase):
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 40, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2, sticky="w")
         
-        subtitulo = ctk.CTkLabel(conteudo, text="Seja bem vindo!", font=("Arial", 20), text_color=COR_TEXTO)
+        subtitulo = ctk.CTkLabel(conteudo, text=f"Seja bem vindo(a) {self.usuario.nome}!", font=("Arial", 20), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, sticky="w")
         
         pergunta = ctk.CTkLabel(conteudo, text="O que você deseja fazer?", font=("Arial", 22, "bold"), text_color=COR_TEXTO)
@@ -1347,8 +1360,8 @@ class App(ctk.CTk):
         self.geometry("900x550")
         self.resizable(False, False)
         self.tela_atual = None
+        self.usuario_atual = None
         self.mostrar_inicial()
-    
     def mostrar_tela(self, tela_classe):
         if self.tela_atual:
             self.tela_atual.destroy()
@@ -1425,6 +1438,7 @@ class App(ctk.CTk):
         self.mostrar_tela(TelaPrincipal)
 
 # ================== EXECUÇÃO ==================
+sistema = lib.Sistema("DemetriosMelhorProfessor")
 
 if __name__ == "__main__":
     app = App()
