@@ -737,85 +737,40 @@ class TelaCalculoBase(TelaBase):
 
 class TelaDormirCedo(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master, controlador,
-            "Dormir cedo",
-            "Dormir cedo hoje é investir em uma versão mais forte de você amanhã.",
-            "Calcular tempo do sono",
-            "Hora que dormi",
-            "Hora que acordei",
-            "00.00 horas",
-            "00.00 horas"
-        )
+        super().__init__(master, controlador,"Dormir cedo",lib.DormirCedo().motivar(),"Calcular tempo do sono","Hora que dormi","Hora que acordei","00.00 horas","00.00 horas")
     
     def calcular(self):
         try:
-            dormir = self.entrada1.get()
-            acordar = self.entrada2.get()
-            self.resultado.configure(text="8.00 horas")
+            self.resultado.configure(text=lib.DormirCedo().calular_sono(self.entrada1.get(),self.entrada2.get()))
         except:
             self.resultado.configure(text="Horário inválido")
 
 class TelaAtividadeFisica(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master, controlador,
-            "Atividade física",
-            "Seu corpo pode até pedir para parar, mas sua mente decide continuar.",
-            "Calcular IMC",
-            "Peso",
-            "Altura",
-            "--.- IMC",
-            "--.- IMC"
-        )
-    
+        super().__init__(master, controlador,"Atividade física",lib.AtividadeFisica().motivar(),"Calcular IMC","Peso","Altura","--.- kg","--.- m")
     def calcular(self):
         try:
-            peso = self.entrada1.get()
-            altura = self.entrada2.get()
-            self.resultado.configure(text="22.5 IMC")
+            self.resultado.configure(text=lib.AtividadeFisica().calcular_IMC(float(self.entrada1.get()),float(self.entrada2.get())))
         except:
             self.resultado.configure(text="Valor inválido")
 
 class TelaLeitura(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master, controlador,
-            "Leitura",
-            "Quem lê vive mil vidas em uma só.",
-            "Calcular média de páginas lidas por dia",
-            "Páginas",
-            "Dias",
-            "--.- páginas por dia",
-            "--.- páginas por dia"
-        )
+        super().__init__(master, controlador,"Leitura",lib.Leitura().motivar(),"Calcular média de páginas lidas por dia","Páginas lidas ao todo","Tempo gasto na leitura","- páginas","- dias")
     
     def calcular(self):
         try:
-            paginas = self.entrada1.get()
-            dias = self.entrada2.get()
-            self.resultado.configure(text="15 páginas por dia")
+            self.resultado.configure(text=lib.Leitura().calcular_media(float(self.entrada1.get()),float(self.entrada2.get())))
         except:
             self.resultado.configure(text="Valor inválido")
 
 class TelaMeditacao(TelaCalculoBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master, controlador,
-            "Meditação",
-            "Respire fundo e permita que sua mente encontre a calma.",
-            "Calcular tempo meditação",
-            "Hora do inicio da meditação",
-            "Hora do fim da meditação",
-            "00.00 horas",
-            "00.00 horas"
-        )
-    
+        super().__init__(master, controlador,"Meditação",lib.Meditacao().motivar(),"Calcular tempo meditação","Hora do inicio da meditação","Hora do fim da meditação","00.00 horas","00.00 horas")
+        
     def calcular(self):
         try:
-            inicio = self.entrada1.get()
-            fim = self.entrada2.get()
-            self.resultado.configure(text="25 minutos")
+            self.resultado.configure(text=lib.Meditacao().calcular_tempo_meditacao(self.entrada1.get(),self.entrada2.get()))
         except:
             self.resultado.configure(text="Horário inválido")
 
