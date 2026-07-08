@@ -211,20 +211,23 @@ class TelaCadastro(TelaBase):
         voltar.place(relx=0, rely=1, anchor="sw", x=10, y=-5)
     
     def fazer_cadastro(self):
-        print("Nome:", self.nome.get())
-        print("Senha:", self.senha.get())
+        self.controlador.informacoes.append(self.nome.get())
+        self.controlador.informacoes.append(self.senha.get())
         habitos = []
-        if self.dormir.get(): habitos.append("Dormir cedo")
-        if self.atividade.get(): habitos.append("Atividade Física")
-        if self.leitura.get(): habitos.append("Leitura")
-        if self.meditacao.get(): habitos.append("Meditação")
-        print("Hábitos:", habitos)
+        if self.dormir.get(): 
+            habitos.append("dormir cedo")
+        if self.atividade.get(): 
+            habitos.append("atividade fisica")
+        if self.leitura.get(): 
+            habitos.append("leitura")
+        if self.meditacao.get(): 
+            habitos.append("meditacao")
+        self.controlador.informacoes.append(habitos)
         self.controlador.mostrar_caracterizacao1()
 
 # ================== TELA CARACTERIZAÇÃO ==================
 
 class TelaCaracterizacaoBase(TelaBase):
-    
     def __init__(self, master, controlador, largura_barra=40):
         super().__init__(master, controlador, largura_barra)
     
@@ -255,64 +258,53 @@ class TelaCaracterizacao1(TelaCaracterizacaoBase):
     
     def criar_conteudo(self):
         conteudo = self.criar_estrutura_conteudo()
-        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2)
-        
         subtitulo = ctk.CTkLabel(conteudo, text="Vamos começar pela sua caracterização!", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, pady=(0, 25))
-        
         coluna_esquerda = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_esquerda.grid(row=2, column=0, padx=(15, 35), sticky="n")
         coluna_direita = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_direita.grid(row=2, column=1, padx=(35, 15), sticky="n")
-        
         self.idade = self.criar_campo_caracterizacao(coluna_esquerda, "Idade")
-        
         genero_frame = ctk.CTkFrame(coluna_esquerda, fg_color="transparent")
         genero_frame.pack(fill="x", pady=(0, 16))
         genero_label = ctk.CTkLabel(genero_frame, text="Gênero", text_color=COR_TEXTO, font=("Arial", 16))
         genero_label.pack(anchor="w")
-        
-        self.genero = ctk.CTkComboBox(
-            genero_frame, values=["Mulher", "Homem", "Outro"], width=285, height=42,
-            corner_radius=10, border_width=0, fg_color=COR_CAMPO,
-            button_color=COR_CAMPO, button_hover_color=COR_HOVER,
-            dropdown_fg_color=COR_CAMPO, dropdown_hover_color=COR_HOVER,
-            dropdown_text_color="white", text_color="white"
-        )
+        self.genero = ctk.CTkComboBox(genero_frame, values=["Mulher", "Homem", "Outro"], width=285, height=42, corner_radius=10, border_width=0, fg_color=COR_CAMPO, button_color=COR_CAMPO, button_hover_color=COR_HOVER, dropdown_fg_color=COR_CAMPO, dropdown_hover_color=COR_HOVER, dropdown_text_color="white", text_color="white")
         self.genero.set("Mulher")
         self.genero.pack(anchor="w", pady=(3, 0))
-        
         self.ano = self.criar_campo_caracterizacao(coluna_esquerda, "Ano acadêmico")
-        
-        aviso = ctk.CTkLabel(
-            coluna_esquerda, text="Avalie as demais categorias de 0-10",
-            fg_color="#F7C29A", text_color=COR_TEXTO, corner_radius=5,
-            font=("Arial", 14, "bold"), padx=8, pady=4
-        )
+        aviso = ctk.CTkLabel(coluna_esquerda, text="Avalie as demais categorias de 0-10", fg_color="#F7C29A", text_color=COR_TEXTO, corner_radius=5, font=("Arial", 14, "bold"), padx=8, pady=4)
         aviso.pack(anchor="w", pady=(0, 16))
-        
         self.horas = self.criar_campo_caracterizacao(coluna_esquerda, "Horas de estudo por dia")
         self.pressao = self.criar_campo_caracterizacao(coluna_direita, "Pressão provas")
         self.performance = self.criar_campo_caracterizacao(coluna_direita, "Performance acadêmica")
         self.estresse = self.criar_campo_caracterizacao(coluna_direita, "Nível estresse")
         self.ansiedade = self.criar_campo_caracterizacao(coluna_direita, "Nível ansiedade")
-        
-        avancar = ctk.CTkButton(
-            conteudo, text=">", width=30, height=30, corner_radius=35,
-            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
-            font=("Arial", 28, "bold"), command=self.pegar_dados
-        )
+        avancar = ctk.CTkButton(conteudo, text=">", width=30, height=30, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.pegar_dados)
         avancar.place(relx=0.98, rely=0.97, anchor="se")
     
     def pegar_dados(self):
-        dados = [
-            self.idade.get(), self.genero.get(), self.ano.get(),
-            self.horas.get(), self.pressao.get(), self.performance.get(),
-            self.estresse.get(), self.ansiedade.get()
-        ]
-        print(dados)
+        idade = int(self.idade.get())
+        ano = int(self.ano.get())
+        horas = float(self.horas.get())
+        pressao = float(self.pressao.get())
+        performance = float(self.performance.get())
+        estresse = float(self.estresse.get())
+        ansiedade = float(self.ansiedade.get())
+        genero = 'Other'
+        if self.genero.get() == 'Mulher':
+            genero = 'Female'
+        elif self.genero.get() == 'Homem':
+            genero = 'Male'
+        dados_f = lib.DadosFactuais(idade, genero, ano)
+        self.controlador.informacoes.append(dados_f)
+        self.controlador.informacoes.append(horas)
+        self.controlador.informacoes.append(pressao)
+        self.controlador.informacoes.append(performance)
+        self.controlador.informacoes.append(estresse)
+        self.controlador.informacoes.append(ansiedade)
         self.controlador.mostrar_caracterizacao2()
 
 class TelaCaracterizacao2(TelaCaracterizacaoBase):
@@ -322,18 +314,14 @@ class TelaCaracterizacao2(TelaCaracterizacaoBase):
     
     def criar_conteudo(self):
         conteudo = self.criar_estrutura_conteudo()
-        
         titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
         titulo.grid(row=0, column=0, columnspan=2)
-        
         subtitulo = ctk.CTkLabel(conteudo, text="Vamos começar pela sua caracterização!", font=("Arial", 18), text_color=COR_TEXTO)
         subtitulo.grid(row=1, column=0, columnspan=2, pady=(0, 25))
-        
         coluna_esquerda = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_esquerda.grid(row=2, column=0, padx=(15, 35), sticky="n")
         coluna_direita = ctk.CTkFrame(conteudo, fg_color="transparent")
         coluna_direita.grid(row=2, column=1, padx=(35, 15), sticky="n")
-        
         self.depressao = self.criar_campo_caracterizacao(coluna_esquerda, "Nível depressão")
         self.sono = self.criar_campo_caracterizacao(coluna_esquerda, "Horas de sono")
         self.atividade = self.criar_campo_caracterizacao(coluna_esquerda, "Atividade física")
@@ -342,21 +330,40 @@ class TelaCaracterizacao2(TelaCaracterizacaoBase):
         self.internet = self.criar_campo_caracterizacao(coluna_direita, "Uso de internet")
         self.financeiro = self.criar_campo_caracterizacao(coluna_direita, "Estresse financeiro")
         self.familia = self.criar_campo_caracterizacao(coluna_direita, "Expectativa familiar")
-        
-        avancar = ctk.CTkButton(
-            conteudo, text=">", width=30, height=30, corner_radius=35,
-            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
-            font=("Arial", 28, "bold"), command=self.pegar_dados
-        )
+        avancar = ctk.CTkButton(conteudo, text=">", width=30, height=30, corner_radius=35, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO, font=("Arial", 28, "bold"), command=self.pegar_dados)
         avancar.place(relx=0.98, rely=0.97, anchor="se")
     
     def pegar_dados(self):
-        dados = [
-            self.depressao.get(), self.sono.get(), self.atividade.get(),
-            self.suporte.get(), self.tela.get(), self.internet.get(),
-            self.financeiro.get(), self.familia.get()
-        ]
-        print(dados)
+        depressao = float(self.depressao.get())
+        sono = float(self.sono.get())
+        atividade = float(self.atividade.get())
+        suporte = float(self.suporte.get())
+        tela = float(self.tela.get())
+        internet = float(self.internet.get())
+        financeiro = float(self.financeiro.get())
+        familia = float(self.familia.get())
+        nome = self.controlador.informacoes[0]
+        senha = self.controlador.informacoes[1]
+        habitos_selecionados = self.controlador.informacoes[2]
+        dados_f = self.controlador.informacoes[3]
+        horas_estudo = self.controlador.informacoes[4]
+        pressao = self.controlador.informacoes[5]
+        performance = self.controlador.informacoes[6]
+        estresse = self.controlador.informacoes[7]
+        ansiedade = self.controlador.informacoes[8]
+        caracterizacao = lib.Caracterizacao(dados_f, horas_estudo, pressao, performance, estresse, ansiedade, depressao, sono, atividade, suporte, tela, internet, financeiro, familia)
+        novo = lib.Usuario(nome, senha, caracterizacao, sistema)
+        for i in habitos_selecionados:
+            if i == "dormir cedo":
+                novo.adicionar_habito(lib.DormirCedo())
+            elif i == "atividade fisica":
+                novo.adicionar_habito(lib.AtividadeFisica())
+            elif i == 'leitura':
+                novo.adicionar_habito(lib.Leitura())
+            elif i == "meditacao":
+                novo.adicionar_habito(lib.Meditacao())
+        self.controlador.informacoes = []
+        self.controlador.usuario_atual = novo
         self.controlador.mostrar_principal()
 
 # ================== TELA BURNOUT ==================
@@ -1302,6 +1309,7 @@ class App(ctk.CTk):
         self.resizable(False, False)
         self.tela_atual = None
         self.usuario_atual = None
+        self.informacoes = []
         self.mostrar_inicial()
     def mostrar_tela(self, tela_classe):
         if self.tela_atual:
