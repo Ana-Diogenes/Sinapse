@@ -865,14 +865,14 @@ class TelaSenhaMod(TelaSenhaBase):
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
     def verificar_senha(self):
-        if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema).senha_mod:
+        if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_mod:
             self.comando_verificar() 
 
 class TelaSenhaDev(TelaSenhaBase):
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos desenvolvedores:",controlador.mostrar_dev)
     def verificar_senha(self):
-        if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema).senha_dev:
+        if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_dev:
             self.comando_verificar() 
 
 # ================== TELA MOD ==================
@@ -880,6 +880,7 @@ class TelaSenhaDev(TelaSenhaBase):
 class TelaMod(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
+        self.mod = lib.Mod(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -906,11 +907,7 @@ class TelaMod(TelaBase):
         lista.grid(row=2, column=0, sticky="nsew", padx=28, pady=(0, 30))
         lista.grid_columnconfigure(0, weight=1)
         
-        usuarios=[]
-        for u in sistema.usuarios:
-            usuarios.append(u[0])
-        
-        for usuario in usuarios:
+        for usuario in self.mod.listar_usuarios():
             item = ctk.CTkLabel(lista, text=f"•  {usuario}", font=("Arial", 18), text_color=COR_TEXTO, anchor="w", justify="left")
             item.pack(anchor="w", padx=22, pady=3)
         
@@ -926,6 +923,7 @@ class TelaMod(TelaBase):
 class TelaDev(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -979,17 +977,9 @@ class TelaDev(TelaBase):
         )
         self.textbox.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
         
-        texto = """nome,senha,caracterizacao,atividades,habitos,conquistas
-Clara,123456,['caracterização'],['atividades'],['hábitos'],['conquistas']
-João,abc123,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Maria,987654,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Carlos,senha123,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Ana,teste,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Pedro,123,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Lucas,admin,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Fernanda,4321,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Juliana,999,['caracterização'],['atividades'],['hábitos'],['conquistas']
-Paulo,111,['caracterização'],['atividades'],['hábitos'],['conquistas']"""
+        texto = ''
+        for usuario in self.dev.listar_usuarios():
+            texto = texto +f"•  {usuario}\n\n"
         
         self.textbox.insert("0.0", texto)
         self.textbox.configure(state="disabled")
@@ -1006,6 +996,7 @@ Paulo,111,['caracterização'],['atividades'],['hábitos'],['conquistas']"""
 class TelaExcluirUsuario(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1050,8 +1041,7 @@ class TelaExcluirUsuario(TelaBase):
         voltar.place(relx=0.98, rely=0.95, anchor="se")
     
     def excluir_usuario(self):
-        nome = self.usuario.get()
-        print("Usuário excluído:", nome)
+        self.dev.excluir_usuario(self.usuario.get())
 
 # ================== TELA ADICIONAR USUÁRIO ==================
 

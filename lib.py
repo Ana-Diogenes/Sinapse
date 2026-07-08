@@ -283,7 +283,7 @@ class Usuario (AtividadeMixin):
         self.habitos = []
         self.conquistas = []
         self.atividades.append(self.registrar_atividade('criou conta'))
-        if novo:
+        if novo == True:
             sistema.__add__(self)
         
     def listar_habitos(self):
@@ -372,7 +372,6 @@ class Sistema:
                 return usuario
         return False
             
-            
     def __add__(self, usuario):
         with open('usuarios.csv',"a", newline='') as usuarios:
             escritor = csv.writer(usuarios)
@@ -386,9 +385,9 @@ class Sistema:
         with open('usuarios.csv',"r") as usuarios:
             lista_usuarios = csv.reader(usuarios, delimiter=",")
             for linha in lista_usuarios:
-                if (linha [0]).lower() != (usuario.nome).lower():
+                if (linha [0]).lower() != (usuario).lower():
                     lista_nova.append(linha)
-                elif (linha [0]).lower() == (usuario.nome).lower():
+                elif (linha [0]).lower() == (usuario).lower():
                     achou = True
         if achou == False: 
             return self
@@ -403,25 +402,25 @@ class Sistema:
 
 class AcessarSistema(abc.ABC):
     @abc.abstractmethod
-    def listar_usuarios(self,sistema):
+    def listar_usuarios(self):
         pass
 
 class Dev(Usuario,AcessarSistema):
     __senha_dev = 'DevDoSistema'
     
-    def listar_usuarios(self,sistema):
-        return sistema.usuarios
+    def listar_usuarios(self):
+        return self.sistema.usuarios
     
-    def excluir_usuario(self, sistema,usuario):
-        sistema = sistema - usuario
-        return sistema
+    def excluir_usuario(self,usuario):
+        self.sistema = self.sistema - usuario
+        return self.sistema
 
-    def adicionar_usuario(self,sistema,usuario):
-        sistema = sistema + usuario
-        return sistema
+    def adicionar_usuario(self,usuario):
+        self.sistema = self.sistema + usuario
+        return self.sistema
     
-    def mudar_senha(self,sistema,nova_senha):
-        sistema.senha = nova_senha
+    def mudar_senha(self,nova_senha):
+        self.sistema.senha = nova_senha
     
     @property
     def senha_dev(self):
@@ -434,9 +433,9 @@ class Dev(Usuario,AcessarSistema):
             
 class Mod(Usuario,AcessarSistema):
     __senha_mod = 'ModDoSistema'
-    def listar_usuarios(self,sistema):
+    def listar_usuarios(self):
         nomes_usuarios = []
-        for user in sistema.usuarios:
+        for user in self.sistema.usuarios:
             nomes_usuarios.append(user[0])
         return nomes_usuarios
     
