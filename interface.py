@@ -872,14 +872,48 @@ class TelaSenhaMod(TelaSenhaBase):
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
     def verificar_senha(self):
-        if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_mod:
+        if self.senha.get() == lib.Mod(sistema).senha_mod:
             self.comando_verificar() 
 
 class TelaSenhaDev(TelaSenhaBase):
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos desenvolvedores:",controlador.mostrar_dev)
+        
+    def criar_conteudo(self):
+        conteudo = ctk.CTkFrame(self, fg_color="transparent")
+        conteudo.grid(row=0, column=1, sticky="nsew", padx=60, pady=25)
+        
+        titulo = ctk.CTkLabel(conteudo, text="Sinapse", font=("Arial", 42, "bold"), text_color=COR_TITULO)
+        titulo.pack(pady=(10, 80))
+        
+        texto = ctk.CTkLabel(conteudo, text=self.texto_instrucao, font=("Arial", 20), text_color=COR_TEXTO)
+        texto.pack()
+        
+        self.senha = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
+        self.senha.pack(pady=(20, 0))
+        
+        label_senha2 = ctk.CTkLabel(conteudo, text="Informe a senha do sistema", font=("Arial", 20), text_color=COR_TEXTO)
+        label_senha2.pack(pady=(10, 0))
+        
+        self.senha2 = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
+        self.senha2.pack(pady=(5, 0))
+        
+        botao = ctk.CTkButton(
+            conteudo, text="Enviar", width=140, height=45,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
+            font=("Arial", 18, "bold"), command=self.verificar_senha
+        )
+        botao.pack(pady=(20, 0))
+        
+        voltar = ctk.CTkButton(
+            conteudo, text="<", width=65, height=65, corner_radius=35,
+            fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,
+            font=("Arial", 28, "bold"), command=self.controlador.mostrar_principal
+        )
+        voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
+        
     def verificar_senha(self):
-        if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_dev:
+        if self.senha.get() == lib.Dev(sistema).senha_dev and self.senha2.get() == sistema.senha:
             self.comando_verificar() 
 
 # ================== TELA MOD ==================
@@ -930,7 +964,7 @@ class TelaMod(TelaBase):
 class TelaDev(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
+        self.dev = lib.Dev(sistema)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1003,7 +1037,7 @@ class TelaDev(TelaBase):
 class TelaExcluirUsuario(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
+        self.dev = lib.Dev(sistema)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1159,7 +1193,7 @@ class TelaAdicionarUsuario(TelaBase):
 class TelaAlterarSenha(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
+        self.dev = lib.Dev(sistema)
         self.criar_conteudo()
     
     def criar_conteudo(self):
