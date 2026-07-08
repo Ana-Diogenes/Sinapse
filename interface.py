@@ -828,6 +828,7 @@ class TelaSenhaBase(TelaBase):
         super().__init__(master, controlador)
         self.comando_verificar = comando_verificar
         self.texto_instrucao = texto_instrucao
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()  
     
     def criar_conteudo(self):
@@ -858,26 +859,21 @@ class TelaSenhaBase(TelaBase):
         voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
     
     def verificar_senha(self):
-        print(self.senha.get())
-        self.comando_verificar() 
+        pass
 
 class TelaSenhaMod(TelaSenhaBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master,
-            controlador,
-            "Informe a senha dos moderadores:",
-            controlador.mostrar_mod
-        )
+        super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
+    def verificar_senha(self):
+        if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema).senha_mod:
+            self.comando_verificar() 
 
 class TelaSenhaDev(TelaSenhaBase):
     def __init__(self, master, controlador):
-        super().__init__(
-            master,
-            controlador,
-            "Informe a senha dos desenvolvedores:",
-            controlador.mostrar_dev
-        )
+        super().__init__(master,controlador,"Informe a senha dos desenvolvedores:",controlador.mostrar_dev)
+    def verificar_senha(self):
+        if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema).senha_dev:
+            self.comando_verificar() 
 
 # ================== TELA MOD ==================
 
@@ -910,7 +906,9 @@ class TelaMod(TelaBase):
         lista.grid(row=2, column=0, sticky="nsew", padx=28, pady=(0, 30))
         lista.grid_columnconfigure(0, weight=1)
         
-        usuarios = ["user01", "user02", "user03", "user04", "user05", "user06", "user07", "user08", "user09", "user10", "user11", "user12", "user13", "user14", "user15", "user16", "user17", "user18", "user19", "user20"]
+        usuarios=[]
+        for u in sistema.usuarios:
+            usuarios.append(u[0])
         
         for usuario in usuarios:
             item = ctk.CTkLabel(lista, text=f"•  {usuario}", font=("Arial", 18), text_color=COR_TEXTO, anchor="w", justify="left")
