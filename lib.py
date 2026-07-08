@@ -365,7 +365,10 @@ class Sistema:
                         usuario.habitos.append(Leitura())
                     elif h == "meditacao":
                         usuario.habitos.append(Meditacao())
-                usuario.conquistas = ast.literal_eval(user[5])
+                conquistas = ast.literal_eval(user[5])
+                usuario.conquistas = []
+                for c_nome in conquistas:
+                    usuario.conquistas.append(Conquista(c_nome))
                 return usuario
         return False
             

@@ -444,9 +444,11 @@ pode ser o início da Síndrome de Burnout."""
 class TelaResultado(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
+        resultado = self.usuario.prever()[0]
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
         conteudo.grid(row=0, column=1, sticky="nsew", padx=35, pady=25)
         conteudo.grid_rowconfigure(0, weight=1)
@@ -457,11 +459,21 @@ class TelaResultado(TelaBase):
         
         titulo = ctk.CTkLabel(painel, text="Nível de risco:", font=("Arial", 26, "bold"), text_color=COR_TEXTO)
         titulo.pack(pady=(22, 0))
-        
-        risco = ctk.CTkLabel(painel, text="ALTO", font=("Arial", 46, "bold"), text_color=COR_TEXTO)
-        risco.pack(pady=(0, 20))
-        
-        texto = """Isso não significa necessariamente que você tenha a síndrome,
+        texto = ''
+        if resultado == 'Low':
+            texto = '''Seu resultado indica um baixo risco de burnout, o que demonstra que sua rotina e seus hábitos têm contribuído para o seu bem-estar. Ainda assim, é importante continuar cuidando da sua saúde física e emocional para manter esse equilíbrio ao longo do tempo.
+
+Manter hábitos saudáveis, como dormir bem, praticar atividade física, organizar seus horários de estudo e descanso e reservar momentos para lazer e relaxamento, ajuda a prevenir o excesso de estresse e a preservar sua qualidade de vida.
+
+O Sinapse continuará acompanhando sua evolução. Registre seus hábitos, acompanhe seu progresso e valorize cada conquista. Pequenos cuidados diários são essenciais para manter uma rotina saudável e equilibrada.'''
+        elif resultado == 'Medium':
+            texto = '''Seu resultado indica um risco moderado de burnout. Isso significa que alguns aspectos da sua rotina podem estar aumentando seus níveis de estresse e merecem um pouco mais de atenção antes que se tornem um problema maior.
+
+Este é um bom momento para refletir sobre seus hábitos e fazer pequenos ajustes no dia a dia. Dormir adequadamente, praticar atividade física, fazer pausas durante os estudos, organizar melhor seu tempo e reservar momentos para descanso podem ajudar a reduzir o estresse e melhorar seu bem-estar.
+
+O Sinapse estará com você nessa caminhada. Acompanhe seus hábitos regularmente, mantenha a consistência e celebre cada progresso alcançado. Cuidar da sua saúde hoje é a melhor forma de construir uma rotina mais equilibrada para o futuro.'''
+        elif resultado == 'High':
+            texto = """Isso não significa necessariamente que você tenha a síndrome,
 mas é um sinal de que seu bem-estar merece atenção. O estresse constante,
 a sobrecarga e o cansaço podem afetar sua saúde física e emocional
 se não forem cuidados.
@@ -476,6 +488,8 @@ O Sinapse estará ao seu lado nessa jornada. Acompanhe seus hábitos
 diariamente, mantenha a consistência e celebre cada pequena conquista.
 Cuidar de você hoje é o primeiro passo para uma rotina mais saudável amanhã."""
         
+        risco = ctk.CTkLabel(painel, text=resultado, font=("Arial", 46, "bold"), text_color=COR_TEXTO)
+        risco.pack(pady=(0, 20))
         mensagem = ctk.CTkLabel(painel, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", wraplength=730, anchor="nw")
         mensagem.pack(fill="both", expand=True, padx=28, pady=(0, 28))
         
