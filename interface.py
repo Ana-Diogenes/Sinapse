@@ -1069,19 +1069,23 @@ class TelaAdicionarUsuario(TelaBase):
         return entrada
     
     def enviar_dados(self):
-        dados = {
-            "nome": self.nome.get() if hasattr(self, 'nome') else "",
-            "senha": self.senha.get() if hasattr(self, 'senha') else "",
-            "dormir_cedo": self.dormir.get(),
-            "atividade_fisica": self.atividade.get(),
-            "leitura": self.leitura.get(),
-            "meditacao": self.meditacao.get()
-        }
-        
-        for nome_campo, campo in self.campos.items():
-            dados[nome_campo] = campo.get()
-        
-        print(dados)
+        idade = int(self.campos["idade"].get())
+        genero = self.campos["genero"].get()
+        ano = int(self.campos["ano"].get())
+        dados_f= lib.DadosFactuais(idade,genero,ano)
+        caracterizacao = lib.Caracterizacao(dados_f,float(self.campos["horas_estudo"].get()),float(self.campos["pressao"].get()),float(self.campos["performance"].get()),float(self.campos["estresse"].get()),float(self.campos["ansiedade"].get()),float(self.campos["depressao"].get()),float(self.campos["sono"].get()),float(self.campos["fisica"].get()),float(self.campos["suporte"].get()),float(self.campos["tela"].get()),float(self.campos["internet"].get()),float(self.campos["financeiro"].get()),float(self.campos["familia"].get()))
+        usuario = lib.Usuario(self.nome.get(),self.senha.get(),caracterizacao,sistema)
+        if self.dormir.get():
+            usuario.adicionar_habito(lib.DormirCedo())
+
+        if self.atividade.get():
+            usuario.adicionar_habito(lib.AtividadeFisica())
+
+        if self.leitura.get():
+            usuario.adicionar_habito(lib.Leitura())
+
+        if self.meditacao.get():
+            usuario.adicionar_habito(lib.Meditacao())
     
     def criar_conteudo(self):
         conteudo = ctk.CTkFrame(self, fg_color="transparent")
@@ -1122,15 +1126,7 @@ class TelaAdicionarUsuario(TelaBase):
         direita.grid_columnconfigure(0, weight=1)
         direita.grid_columnconfigure(1, weight=1)
         
-        campos = [
-            ("Idade", "idade"), ("Genero", "genero"), ("Ano academico", "ano"),
-            ("Tempo tela", "tela"), ("Horas de sono", "sono"),
-            ("Suporte social", "suporte"), ("Pressao provas", "pressao"),
-            ("Nivel estresse", "estresse"), ("Nivel ansiedade", "ansiedade"),
-            ("Uso de internet", "internet"), ("Performance academica", "performance"),
-            ("Expectativa familiar", "familia"), ("Atividade física", "fisica"),
-            ("Estresse financeiro", "financeiro"), ("Nivel depressão", "depressao")
-        ]
+        campos = [("Idade", "idade"), ("Genero", "genero"), ("Ano academico", "ano"),("Horas de estudo", "horas_estudo"),("Tempo tela", "tela"), ("Horas de sono", "sono"),("Suporte social", "suporte"), ("Pressao provas", "pressao"),("Nivel estresse", "estresse"), ("Nivel ansiedade", "ansiedade"),("Uso de internet", "internet"), ("Performance academica", "performance"),("Expectativa familiar", "familia"), ("Atividade física", "fisica"),("Estresse financeiro", "financeiro"), ("Nivel depressão", "depressao"),('----------------','----------------')]
         
         self.campos = {}
         linha = coluna = 0
