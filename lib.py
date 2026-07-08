@@ -323,8 +323,9 @@ class Usuario (AtividadeMixin):
         self.sistema.atualizar_sistema(self)
 
 class Sistema:
-    def __init__(self,senha):
-        self.__senha = senha
+    def __init__(self):
+        with open('senha_sistema.csv',"r") as arquivo_senha:
+            self.__senha = arquivo_senha.read()
         with open('usuarios.csv',"r") as lista_usuarios:
             users = list(csv.reader(lista_usuarios, delimiter=","))
         self.usuarios = users
@@ -334,8 +335,9 @@ class Sistema:
     
     @senha.setter
     def senha(self,nova_senha):
-        if len(nova_senha) >=8:
-            self.__senha = nova_senha
+        with open('senha_sistema.csv','w', newline='') as arquivo:
+            arquivo.write(nova_senha)
+        self.__senha = nova_senha
         
     def atualizar_sistema(self,usuario):
         lista_nova = []
@@ -415,9 +417,6 @@ class Dev(Usuario,AcessarSistema):
         self.sistema = self.sistema - usuario
         return self.sistema
 
-    def adicionar_usuario(self,usuario):
-        self.sistema = self.sistema + usuario
-        return self.sistema
     
     def mudar_senha(self,nova_senha):
         self.sistema.senha = nova_senha

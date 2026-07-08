@@ -1159,6 +1159,7 @@ class TelaAdicionarUsuario(TelaBase):
 class TelaAlterarSenha(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1198,8 +1199,7 @@ class TelaAlterarSenha(TelaBase):
         voltar.place(relx=0.98, rely=0.96, anchor="se")
     
     def alterar_senha(self):
-        senha = self.nova_senha.get()
-        print("Nova senha:", senha)
+        self.dev.mudar_senha(self.nova_senha.get())
 
 # ================== TELA PRINCIPAL ==================
 
@@ -1383,7 +1383,7 @@ class App(ctk.CTk):
         self.mostrar_tela(TelaPrincipal)
 
 # ================== EXECUÇÃO ==================
-sistema = lib.Sistema("DemetriosMelhorProfessor")
+sistema = lib.Sistema()
 
 if __name__ == "__main__":
     app = App()
