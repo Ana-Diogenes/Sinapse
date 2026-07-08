@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import lib
-
+import ast
 # ================== CORES ==================
 
 COR_FUNDO = "#F7E9B3"
@@ -506,6 +506,7 @@ Cuidar de você hoje é o primeiro passo para uma rotina mais saudável amanhã.
 class TelaHabitos(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_opcao(self, parent, texto):
@@ -557,12 +558,15 @@ class TelaHabitos(TelaBase):
         voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-10)
     
     def proxima_tela(self):
-        habitos = []
-        if self.dormir.get(): habitos.append("Dormir cedo")
-        if self.atividade.get(): habitos.append("Praticar atividade física")
-        if self.leitura.get(): habitos.append("Leitura")
-        if self.meditacao.get(): habitos.append("Meditação")
-        print(habitos)
+        self.usuario.habitos = []
+        if self.dormir.get():
+            self.usuario.adicionar_habito(lib.DormirCedo())
+        if self.atividade.get():
+            self.usuario.adicionar_habito(lib.AtividadeFisica())
+        if self.leitura.get():
+            self.usuario.adicionar_habito(lib.Leitura())
+        if self.meditacao.get():
+            self.usuario.adicionar_habito(lib.Meditacao())
         self.controlador.mostrar_principal()
 
 # ================== TELA CONQUISTAS ==================
@@ -570,6 +574,7 @@ class TelaHabitos(TelaBase):
 class TelaConquistas(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -592,20 +597,9 @@ class TelaConquistas(TelaBase):
         )
         caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
         caixa_texto.grid_columnconfigure(0, weight=1)
-        
-        texto = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.
-
-Nunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-
-Proin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.
-
-Praesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-
-Curabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.
-
-Nulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.
-
-Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"""
+        texto = ''
+        for c in ast.literal_eval(self.usuario.listar_conquistas()):
+            texto = texto + f'• {c}\n'
         
         texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
         texto_label.pack(fill="both", expand=True, padx=20, pady=15)
@@ -623,6 +617,7 @@ Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacu
 class TelaAtividades(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
+        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -645,20 +640,9 @@ class TelaAtividades(TelaBase):
         )
         caixa_texto.grid(row=1, column=0, sticky="nsew", padx=28, pady=(0, 30))
         caixa_texto.grid_columnconfigure(0, weight=1)
-        
-        texto = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin mattis rhoncus dapibus.
-
-Nunc mi arcu, vestibulum in luctus eu, bibendum vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-
-Proin luctus nulla a arcu dignissim ullamcorper. Aliquam sed dolor mollis, iaculis nibh eget, condimentum dui. Nunc iaculis hendrerit imperdiet.
-
-Praesent aliquam sem tellus, et condimentum nunc vulputate nec. Nam sed gravida erat, at interdum sem. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
-
-Curabitur at maximus dui. Maecenas sed leo lectus. Nullam consectetur libero sem, non semper diam laoreet a. Donec a maximus tortor.
-
-Nulla luctus et ligula ac eleifend. Pellentesque eu risus ac nisl sagittis luctus. Fusce rutrum nunc sem, non interdum purus scelerisque eleifend. Nulla facilisi.
-
-Aliquam quis mi posuere, bibendum justo sagittis, sagittis leo. Quisque vel lacus quis arcu tincidunt efficitur ut non metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;"""
+        texto = ''
+        for a in self.usuario.atividades:
+            texto = texto + f'• {a}\n'
         
         texto_label = ctk.CTkLabel(caixa_texto, text=texto, font=("Arial", 16), text_color=COR_TEXTO, justify="left", anchor="nw", wraplength=650)
         texto_label.pack(fill="both", expand=True, padx=20, pady=15)
