@@ -100,4 +100,5 @@ student_mental_health_burnout_1M.csv
 O principal objetivo do **Sinapse** é promover hábitos saudáveis e conscientizar estudantes sobre fatores que contribuem para o burnout, utilizando técnicas de Inteligência Artificial para fornecer uma estimativa de risco e incentivar mudanças positivas na rotina.
 
 Mais do que realizar uma previsão, o sistema busca incentivar o autocuidado, acompanhar a evolução dos usuários e oferecer ferramentas que contribuam para uma melhor saúde física e mental.
+
 <img width="8192" height="4078" alt="User Management System Flow-2026-07-09-163251" src="https://github.com/user-attachments/assets/8f981932-7712-44be-870b-4f14447a96f7" />
