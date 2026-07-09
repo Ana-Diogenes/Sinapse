@@ -407,7 +407,7 @@ class AcessarSistema(abc.ABC):
     def listar_usuarios(self):
         pass
 
-class Dev(Usuario,AcessarSistema):
+class Dev(AcessarSistema):
     __senha_dev = 'DevDoSistema'
     def __init__(self, sistema):
         self.sistema = sistema
@@ -431,7 +431,7 @@ class Dev(Usuario,AcessarSistema):
         if len(nova_senha) >=8:
             Dev.senha_dev = nova_senha
             
-class Mod(Usuario,AcessarSistema):
+class Mod(AcessarSistema):
     __senha_mod = 'ModDoSistema'
     def __init__(self, sistema):
         self.sistema = sistema
@@ -441,8 +441,7 @@ class Mod(Usuario,AcessarSistema):
         for user in self.sistema.usuarios:
             nomes_usuarios.append(user[0])
         return nomes_usuarios
-    def __init__(self, sistema):
-        super().__init__(sistema)
+
     @property
     def senha_mod(self):
         return Mod.__senha_mod

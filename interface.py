@@ -921,7 +921,7 @@ class TelaSenhaDev(TelaSenhaBase):
 class TelaMod(TelaBase):
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
-        self.mod = lib.Mod(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
+        self.mod = lib.Mod(sistema)
         self.criar_conteudo()
     
     def criar_conteudo(self):
