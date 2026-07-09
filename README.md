@@ -1,4 +1,4 @@
-# 🧠 Sinapse// Projeto final Programação Orientada a Objetos
+# 🧠 Sinapse // Projeto final Programação Orientada a Objetos
 
 O **Sinapse** é um sistema desktop desenvolvido em **Python** com **CustomTkinter**, criado para auxiliar estudantes no acompanhamento de hábitos saudáveis e na identificação do risco de desenvolvimento da **Síndrome de Burnout** por meio de um modelo de Inteligência Artificial.
 
