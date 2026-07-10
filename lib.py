@@ -8,10 +8,18 @@ import csv
 import ast
 
 class DadosFactuais:
-    def __init__(self,idade,genero,ano_academico):
-            self.__idade = idade
-            self.__genero = genero
-            self.__ano_academico = ano_academico 
+    '''
+    Informações mais basicas do usuario
+    
+    Attributes:
+        idade (int): idade
+        genero (str): genero
+        ano_academico (int): ano que a pessoa está na escola ou faculdade
+    '''
+    def __init__(self,idade,genero,ano_academico):  
+        self.__idade = idade
+        self.__genero = genero
+        self.__ano_academico = ano_academico 
     @property
     def idade(self):
         return self.__idade
@@ -46,21 +54,39 @@ class DadosFactuais:
         return False
 
 class Caracterizacao:
-    def __init__(self,dados_factuais,horas_estudo_dia,pressao_provas,performance_academica,nivel_estresse,nivel_ansiedade,nivel_depressao,horas_sono,atividade_fisica,suporte_social,tempo_tela,uso_internet,estresse_financeiro,expectativa_familiar):
-            self.dados_factuais = dados_factuais
-            self.__horas_estudo_dia = horas_estudo_dia
-            self.__pressao_provas = pressao_provas
-            self.__performance_academica = performance_academica
-            self.__nivel_estresse = nivel_estresse
-            self.__nivel_ansiedade = nivel_ansiedade
-            self.__nivel_depressao = nivel_depressao
-            self.__horas_sono = horas_sono
-            self.__atividade_fisica = atividade_fisica
-            self.__suporte_social = suporte_social
-            self.__tempo_tela = tempo_tela
-            self.__uso_internet = uso_internet
-            self.__estresse_financeiro = estresse_financeiro
-            self.__expectativa_familiar = expectativa_familiar
+    """Informacoes sobre o usuario necessarias para prever seu nivel de burnout
+
+        Attributes:
+            dados_factuais (DadosFactuais): Informações mais basicas do usuario
+            horas_estudo_dia (float): tempo que o usuario passa estudando
+            pressao_provas (float): pressao antes de provas avaliada em uma escala de 0-10
+            performance_academica (float): performance academica avaliada em uma escala de 0-10
+            nivel_estresse (float): nivel de estresse avaliado em uma escala de 0-10
+            nivel_ansiedade (float): nivel de ansiedade avaliado em uma escala de 0-10
+            nivel_depressao (float): nivel de depressao avaliado em uma escala de 0-10
+            horas_sono (float): horas de sono diarias
+            atividade_fisica (float): nivel de atividade fisica avaliada em uma escala de 0-10
+            suporte_social (float): nivel de suporte que o usuario tem das pessoas do seu convivio avaliado em uma escala de 0-10
+            tempo_tela (float): horas que o usuario passa em telas
+            uso_internet (float): horas que o usuario passa na internet
+            estresse_financeiro (float): nivel de estresse financeiro avaliado em uma escala de 0-10
+            expectativa_familiar (float): nivel de espectativa que a familia tem no usuario avaliado em uma escala de 0-10
+    """
+    def __init__(self,dados_factuais,horas_estudo_dia,pressao_provas,performance_academica,nivel_estresse,nivel_ansiedade,nivel_depressao,horas_sono,atividade_fisica,suporte_social,tempo_tela,uso_internet,estresse_financeiro,expectativa_familiar):        
+        self.dados_factuais = dados_factuais
+        self.__horas_estudo_dia = horas_estudo_dia
+        self.__pressao_provas = pressao_provas
+        self.__performance_academica = performance_academica
+        self.__nivel_estresse = nivel_estresse
+        self.__nivel_ansiedade = nivel_ansiedade
+        self.__nivel_depressao = nivel_depressao
+        self.__horas_sono = horas_sono
+        self.__atividade_fisica = atividade_fisica
+        self.__suporte_social = suporte_social
+        self.__tempo_tela = tempo_tela
+        self.__uso_internet = uso_internet
+        self.__estresse_financeiro = estresse_financeiro
+        self.__expectativa_familiar = expectativa_familiar
     
     @property
     def horas_estudo_dia(self):
@@ -208,7 +234,10 @@ class Caracterizacao:
         return str([self.dados_factuais.idade,self.dados_factuais.genero,self.dados_factuais.ano_academico,self.horas_estudo_dia,self.pressao_provas,self.performance_academica,self.nivel_estresse,self.nivel_ansiedade,self.nivel_depressao,self.horas_sono,self.atividade_fisica,self.suporte_social,self.tempo_tela,self.uso_internet,self.estresse_financeiro,self.expectativa_familiar])
 
 class ModeloIA():
-    def prever(self,dados):
+    """
+    Classe que preve o nível de risco do usuario
+    """    
+    def prever(self,dados):  
         tabela = pd.read_csv("student_mental_health_burnout_1M.csv")
         tradutor = LabelEncoder() 
         tabela['gender'] = tradutor.fit_transform(tabela['gender'])
@@ -222,6 +251,11 @@ class ModeloIA():
         return nova_previsao
 
 class Habito (abc.ABC):
+    """Habito do ususario
+
+    Attributes:
+        nome (str): nome do habito
+    """    
     nome = 'Habito'
     
     @abc.abstractmethod
@@ -229,6 +263,12 @@ class Habito (abc.ABC):
         pass
     
 class DormirCedo(Habito):
+    """
+    Habito dormir cedo
+
+    Attributes:
+        nome (str): nome do habito
+    """
     nome = 'dormir cedo'
     def motivar(self):
         return random.choice(["Dormir cedo hoje é investir em uma versao mais forte de você amanha.","Seu corpo precisa de descanso tanto quanto sua mente precisa de foco.","Quem dorme cedo nao perde tempo — ganha energia.","A disciplina de hoje é o sucesso de amanha começando no seu sono.","Desligar agora é escolher acordar melhor depois.","Nao é sobre dormir menos, é sobre viver melhor.","A noite bem dormida é o primeiro passo de um dia produtivo.","Seu futuro agradece cada hora de sono que você respeita hoje."])
@@ -241,6 +281,12 @@ class DormirCedo(Habito):
         return t2 - t1
 
 class AtividadeFisica (Habito):
+    """
+    Habito praticar atividade fisica
+
+    Attributes:
+        nome (str): nome do habito
+    """
     nome = 'atividade fisica'
     def motivar(self):
         return random.choice(["Seu corpo pode até pedir para parar, mas sua mente decide continuar.","Um treino hoje é um passo a menos em direçao à sua melhor versao.","Disciplina vence a motivaçao quando a vontade acaba.","Você nao treina só o corpo, treina a mente também.","O esforço de hoje é o resultado de amanha.","Nao espere sentir vontade, crie o hábito.","Cada gota de suor te aproxima do seu objetivo.","O limite começa onde sua determinaçao acaba.","Treinar é investir em você mesmo.","Você é mais forte do que a desculpa que tentou te parar."])
@@ -248,6 +294,12 @@ class AtividadeFisica (Habito):
         return peso/(altura**2)
 
 class Leitura (Habito):
+    """
+    Habito leitura
+
+    Attributes:
+        nome (str): nome do habito
+    """
     nome = 'leitura'
     def motivar(self):
         return random.choice(["Quem lê vive mil vidas em uma só.", "Ler é treinar a mente para enxergar o mundo de outra forma.", "Um livro por dia afasta a ignorância para sempre.", "A leitura abre portas que a realidade ainda nao mostrou.", "Quem lê nunca está sozinho.", "Cada página lida é um passo no seu crescimento.", "Livros sao academias para a mente.", "Ler hoje é pensar melhor amanha.", "A leitura transforma curiosidade em conhecimento.", "Quanto mais você lê, mais você entende o mundo."])
@@ -255,6 +307,12 @@ class Leitura (Habito):
         return paginas/dias
     
 class Meditacao (Habito):
+    """
+    Habito meditar
+
+    Attributes:
+        nome (str): nome do habito
+    """
     nome = 'meditacao'
     def motivar(self):
         return random.choice(["Respire fundo e permita que sua mente encontre a calma.", "Cada respiraçao é uma oportunidade de recomeçar.", "O silêncio interior é uma fonte inesgotável de força.", "Você nao precisa controlar tudo; apenas esteja presente.", "A paz que você procura já existe dentro de você.", "Deixe os pensamentos passarem como nuvens no céu.", "Seu bem-estar começa com um momento de atençao plena.", "Respire tranquilidade, expire preocupações.", "A serenidade cresce quando você desacelera."])
@@ -266,15 +324,35 @@ class Meditacao (Habito):
         return t2 - t1
 
 class AtividadeMixin:
+    '''
+    Registra atividade do usuario
+    '''
     def registrar_atividade(self,atividade):
         return f'{self.nome} - {atividade}'
 
 class Conquista:
+    '''
+    Registra conquistas do usuario
+    
+    Attributes:
+        nome(str): nome da conquista
+    '''
+    
     def __init__(self,nome):
         self.nome = nome
 
 class Usuario (AtividadeMixin):
-    def __init__(self,nome, senha, caracterizacao,sistema,novo = True):
+    """
+    Usuario do sistema
+
+        Attributes:
+            nome (str): nome
+            senha (str): senha
+            caracterizacao (Caracterizacao): informacoes do usuario
+            sistema (Sistema): sistema em que o usuario está
+            novo (bool, optional): diz se o usuario é novo no sistema, por padrão é True.
+        """    
+    def __init__(self,nome, senha, caracterizacao,sistema,novo = True):    
         self.sistema = sistema
         self.nome = nome
         self.__senha = senha
@@ -309,6 +387,7 @@ class Usuario (AtividadeMixin):
 
     def prever(self):
         self.atividades.append(self.registrar_atividade('fez previsao com RandomForest'))
+        self.adicionar_conquista('Usuario de IA')
         self.sistema.atualizar_sistema(self)
         return ModeloIA().prever(self.caracteristicas)
 
@@ -320,10 +399,19 @@ class Usuario (AtividadeMixin):
     def adicionar_habito(self,habito):
         self.habitos.append(habito)
         self.atividades.append(self.registrar_atividade(f'adiquiriu o habito {habito.nome}'))
+        self.adicionar_conquista('Melhores Habitos')
         self.sistema.atualizar_sistema(self)
 
 class Sistema:
+    """
+    Sistema que armazena os usuarios
+    
+    attributes:
+        senha(str): senha do sistema
+        usuarios(list): lista de usuarios do sistema
+    """
     def __init__(self):
+                
         with open('senha_sistema.csv',"r") as arquivo_senha:
             self.__senha = arquivo_senha.read()
         with open('usuarios.csv',"r") as lista_usuarios:
@@ -403,11 +491,21 @@ class Sistema:
         return self
 
 class AcessarSistema(abc.ABC):
+    '''
+    Interface para acessar o sistema
+    '''   
     @abc.abstractmethod
     def listar_usuarios(self):
         pass
 
 class Dev(AcessarSistema):
+    """
+    Tem acesso as informações do sistema e pode modifica-lo
+
+    Attributes:
+        senha_dev(str): atributo da classe, compartilhado por todos os devs
+        sistema(Sistema): sistema que o dev acessa
+    """    
     __senha_dev = 'DevDoSistema'
     def __init__(self, sistema):
         self.sistema = sistema
@@ -432,6 +530,13 @@ class Dev(AcessarSistema):
             Dev.senha_dev = nova_senha
             
 class Mod(AcessarSistema):
+    """
+    Tem acesso ao nome dos usuarios do sistema
+
+    Attributes:
+        senha_mod(str): atributo da classe, compartilhado por todos os mods
+        sistema(Sistema): sistema que o mod acessa
+    """
     __senha_mod = 'ModDoSistema'
     def __init__(self, sistema):
         self.sistema = sistema

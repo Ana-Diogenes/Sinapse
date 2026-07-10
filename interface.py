@@ -19,6 +19,12 @@ ctk.set_default_color_theme("blue")
 # ================== CLASSE BASE ==================
 
 class TelaBase(ctk.CTkFrame): 
+    """
+    Classe base para as telas do sistema.
+
+    Attributes:
+        controlador(App): controlador responsável pela navegação entre as telas.
+    """
     def __init__(self, master, controlador, largura_barra=55):
         super().__init__(master, fg_color=COR_FUNDO)
         self.controlador = controlador
@@ -59,6 +65,12 @@ class TelaBase(ctk.CTkFrame):
 # ================== TELA INICIAL ==================
 
 class TelaInicial(TelaBase):
+    """
+    Tela inicial do sistema.
+
+    Attributes:
+        controlador: controlador responsável pela navegação entre as telas.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -102,6 +114,13 @@ class TelaInicial(TelaBase):
 # ================== TELA LOGIN ==================
 
 class TelaLogin(TelaBase):
+    """
+    Tela para realizar o login do usuário.
+
+    Attributes:
+        nome (CTkEntry): campo para o nome do usuário.
+        senha (CTkEntry): campo para a senha do usuário.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -144,6 +163,17 @@ class TelaLogin(TelaBase):
 # ================== TELA CADASTRO ==================
 
 class TelaCadastro(TelaBase):
+    """
+    Tela para cadastro de novos usuários.
+
+    Attributes:
+        nome (CTkEntry): campo para o nome.
+        senha (CTkEntry): campo para a senha.
+        dormir (CTkCheckBox): seleção do hábito dormir cedo.
+        atividade (CTkCheckBox): seleção do hábito atividade física.
+        leitura (CTkCheckBox): seleção do hábito leitura.
+        meditacao (CTkCheckBox): seleção do hábito meditação.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -228,6 +258,9 @@ class TelaCadastro(TelaBase):
 # ================== TELA CARACTERIZAÇÃO ==================
 
 class TelaCaracterizacaoBase(TelaBase):
+    """
+    Classe base das telas de caracterização.
+    """
     def __init__(self, master, controlador, largura_barra=40):
         super().__init__(master, controlador, largura_barra)
     
@@ -252,6 +285,19 @@ class TelaCaracterizacaoBase(TelaBase):
         return conteudo
 
 class TelaCaracterizacao1(TelaCaracterizacaoBase):
+    """
+    Primeira etapa da caracterização do usuário.
+
+    Attributes:
+        idade (CTkEntry): idade do usuário.
+        genero (CTkComboBox): gênero do usuário.
+        ano (CTkEntry): ano acadêmico.
+        horas (CTkEntry): horas de estudo.
+        pressao (CTkEntry): pressão nas provas.
+        performance (CTkEntry): desempenho acadêmico.
+        estresse (CTkEntry): nível de estresse.
+        ansiedade (CTkEntry): nível de ansiedade.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -308,6 +354,19 @@ class TelaCaracterizacao1(TelaCaracterizacaoBase):
         self.controlador.mostrar_caracterizacao2()
 
 class TelaCaracterizacao2(TelaCaracterizacaoBase):
+    """
+    Segunda etapa da caracterização do usuário.
+
+    Attributes:
+        depressao (CTkEntry): nível de depressão.
+        sono (CTkEntry): horas de sono.
+        atividade (CTkEntry): nível de atividade física.
+        suporte (CTkEntry): suporte social.
+        tela (CTkEntry): tempo de tela.
+        internet (CTkEntry): uso de internet.
+        financeiro (CTkEntry): estresse financeiro.
+        familia (CTkEntry): expectativa familiar.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -369,6 +428,9 @@ class TelaCaracterizacao2(TelaCaracterizacaoBase):
 # ================== TELA BURNOUT ==================
 
 class TelaBurnout(TelaBase):
+    """
+    Exibe informações sobre a síndrome de Burnout.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -449,6 +511,12 @@ pode ser o início da Síndrome de Burnout."""
 # ================== TELA RESULTADO ==================
 
 class TelaResultado(TelaBase):
+    """
+    Exibe o resultado da previsão.
+
+    Attributes:
+        usuario (Usuario): usuário logado.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
         self.usuario = controlador.usuario_atual 
@@ -511,6 +579,16 @@ Cuidar de você hoje é o primeiro passo para uma rotina mais saudável amanhã.
 # ================== TELA HABITOS ==================
 
 class TelaHabitos(TelaBase):
+    """
+    Tela para selecionar hábitos.
+
+    Attributes:
+        usuario (Usuario): usuário logado.
+        dormir (Bool): seleção do hábito dormir cedo.
+        atividade (Bool): seleção do hábito atividade física.
+        leitura (Bool): seleção do hábito leitura.
+        meditacao (Bool): seleção do hábito meditação.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.usuario = controlador.usuario_atual 
@@ -579,6 +657,12 @@ class TelaHabitos(TelaBase):
 # ================== TELA CONQUISTAS ==================
 
 class TelaConquistas(TelaBase):
+    """
+    Exibe as conquistas do usuário.
+
+    Attributes:
+        usuario (Usuario): usuário logado.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
         self.usuario = controlador.usuario_atual 
@@ -622,6 +706,12 @@ class TelaConquistas(TelaBase):
 # ================== TELA ATIVIDADES ==================
 
 class TelaAtividades(TelaBase):
+    """
+    Exibe o histórico de atividades.
+
+    Attributes:
+        usuario (Usuario): usuário logado.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
         self.usuario = controlador.usuario_atual 
@@ -665,7 +755,21 @@ class TelaAtividades(TelaBase):
 # ================== TELA CALCULOS (DORMIR, ATIVIDADE FISICA, LEITURA, MEDITACAO) ==================
 
 class TelaCalculoBase(TelaBase):
-    
+    """
+    Classe base para as telas de cálculo.
+
+    Attributes:
+        titulo (str): título da tela.
+        frase (str): frase motivacional.
+        subtitulo (str): subtítulo da tela.
+        label1 (str): descrição da primeira entrada.
+        label2 (str): descrição da segunda entrada.
+        placeholder1 (str): texto inicial do resultado.
+        placeholder2 (str): texto auxiliar.
+        entrada1 (CTkEntry): primeira entrada.
+        entrada2 (CTkEntry): segunda entrada.
+        resultado (CTkLabel): resultado do cálculo.
+    """
     def __init__(self, master, controlador, titulo, frase, subtitulo, label1, label2, placeholder1, placeholder2):
         super().__init__(master, controlador)
         self.titulo = titulo
@@ -743,6 +847,9 @@ class TelaCalculoBase(TelaBase):
         pass
 
 class TelaDormirCedo(TelaCalculoBase):
+    """
+    Tela para calcular o tempo de sono.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador,"Dormir cedo",lib.DormirCedo().motivar(),"Calcular tempo do sono","Hora que dormi","Hora que acordei","00.00 horas","00.00 horas")
     
@@ -753,6 +860,9 @@ class TelaDormirCedo(TelaCalculoBase):
             self.resultado.configure(text="Horário inválido")
 
 class TelaAtividadeFisica(TelaCalculoBase):
+    """
+    Tela para calcular o IMC.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador,"Atividade física",lib.AtividadeFisica().motivar(),"Calcular IMC","Peso","Altura","--.- kg","--.- m")
     def calcular(self):
@@ -762,6 +872,9 @@ class TelaAtividadeFisica(TelaCalculoBase):
             self.resultado.configure(text="Valor inválido")
 
 class TelaLeitura(TelaCalculoBase):
+    """
+    Tela para calcular a média de páginas lidas.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador,"Leitura",lib.Leitura().motivar(),"Calcular média de páginas lidas por dia","Páginas lidas ao todo","Tempo gasto na leitura","- páginas","- dias")
     
@@ -772,6 +885,9 @@ class TelaLeitura(TelaCalculoBase):
             self.resultado.configure(text="Valor inválido")
 
 class TelaMeditacao(TelaCalculoBase):
+    """
+    Tela para calcular o tempo de meditação.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador,"Meditação",lib.Meditacao().motivar(),"Calcular tempo meditação","Hora do inicio da meditação","Hora do fim da meditação","00.00 horas","00.00 horas")
         
@@ -784,6 +900,9 @@ class TelaMeditacao(TelaCalculoBase):
 # ================== TELA CONFIGURACAO ==================
 
 class TelaConfiguracao(TelaBase):
+    """
+    Tela de configuração, destinada aos mods e devs
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -831,6 +950,15 @@ class TelaConfiguracao(TelaBase):
 # ================== TELA SENHA (MOD e DEV) ==================
 
 class TelaSenhaBase(TelaBase):
+    """
+    Classe base para autenticação.
+
+    Attributes:
+        comando_verificar: função executada após validar a senha.
+        texto_instrucao (str): mensagem exibida ao usuário.
+        usuario (Usuario): usuário logado.
+        senha (CTkEntry): campo da senha.
+    """
     def __init__(self, master, controlador, texto_instrucao, comando_verificar):
         super().__init__(master, controlador)
         self.comando_verificar = comando_verificar
@@ -869,6 +997,9 @@ class TelaSenhaBase(TelaBase):
         pass
 
 class TelaSenhaMod(TelaSenhaBase):
+    """
+    Tela de autenticação do moderador.
+    """
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
     def verificar_senha(self):
@@ -876,6 +1007,12 @@ class TelaSenhaMod(TelaSenhaBase):
             self.comando_verificar() 
 
 class TelaSenhaDev(TelaSenhaBase):
+    """
+    Tela de autenticação do desenvolvedor.
+
+    Attributes:
+        senha2 (CTkEntry): campo para a senha do sistema.
+    """
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos desenvolvedores:",controlador.mostrar_dev)
         
@@ -919,6 +1056,12 @@ class TelaSenhaDev(TelaSenhaBase):
 # ================== TELA MOD ==================
 
 class TelaMod(TelaBase):
+    """
+    Tela do moderador.
+
+    Attributes:
+        mod (Mod): moderador do sistema.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
         self.mod = lib.Mod(sistema)
@@ -962,6 +1105,12 @@ class TelaMod(TelaBase):
 # ================== TELA DEV ==================
 
 class TelaDev(TelaBase):
+    """
+    Tela do desenvolvedor.
+
+    Attributes:
+        dev (Dev): desenvolvedor do sistema.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.dev = lib.Dev(sistema)
@@ -1035,6 +1184,13 @@ class TelaDev(TelaBase):
 # ================== TELA EXCLUIR USUÁRIO ==================
 
 class TelaExcluirUsuario(TelaBase):
+    """
+    Tela para excluir usuários.
+
+    Attributes:
+        dev (Dev): desenvolvedor do sistema.
+        usuario (CTkEntry): nome do usuário a ser excluído.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.dev = lib.Dev(sistema)
@@ -1087,6 +1243,18 @@ class TelaExcluirUsuario(TelaBase):
 # ================== TELA ADICIONAR USUÁRIO ==================
 
 class TelaAdicionarUsuario(TelaBase):
+    """
+    Tela para adicionar usuários.
+
+    Attributes:
+        nome (CTkEntry): nome do usuário.
+        senha (CTkEntry): senha do usuário.
+        dormir (CTkCheckBox): hábito dormir cedo.
+        atividade (CTkCheckBox): hábito atividade física.
+        leitura (CTkCheckBox): hábito leitura.
+        meditacao (CTkCheckBox): hábito meditação.
+        campos (dict): campos de caracterização do usuário.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.criar_conteudo()
@@ -1191,6 +1359,13 @@ class TelaAdicionarUsuario(TelaBase):
 # ================== TELA ALTERAR SENHA ==================
 
 class TelaAlterarSenha(TelaBase):
+    """
+    Tela para alterar a senha do sistema.
+
+    Attributes:
+        dev (Dev): desenvolvedor do sistema.
+        nova_senha (CTkEntry): nova senha do sistema.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.dev = lib.Dev(sistema)
@@ -1238,6 +1413,12 @@ class TelaAlterarSenha(TelaBase):
 # ================== TELA PRINCIPAL ==================
 
 class TelaPrincipal(TelaBase):
+    """
+    Tela principal do usuário.
+
+    Attributes:
+        usuario (Usuario): usuário logado.
+    """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
         self.usuario = controlador.usuario_atual 
@@ -1332,6 +1513,14 @@ class TelaPrincipal(TelaBase):
 # ================== CONTROLADOR ==================
 
 class App(ctk.CTk):
+    """
+    Janela principal do sistema.
+
+    Attributes:
+        tela_atual (TelaBase): tela exibida no momento.
+        usuario_atual (Usuario): usuário atualmente logado.
+        informacoes (list): armazena informações temporárias durante o uso do sistema, como a caracterizacao.
+    """
     def __init__(self):
         super().__init__()
         self.title("Sinapse")
