@@ -478,7 +478,6 @@ class Sistema:
         self.usuarios = lista_nova
         return self
 
-
 class Dev(Usuario):
     """
     Tem acesso as informações do sistema e pode modifica-lo

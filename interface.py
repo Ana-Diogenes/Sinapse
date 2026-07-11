@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import lib
 import ast
+import abc
+
 # ================== CORES ==================
 
 COR_FUNDO = "#F7E9B3"
@@ -16,9 +18,17 @@ PALETA = ["#8B5C5C", "#E7A49A", "#FAC1A7", "#FFE1B0", "#FFF2B7"]
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
+# ================== INTERFACE TELA ==================
+
+class InterfaceTela(abc.ABC):
+
+    @abc.abstractmethod
+    def criar_conteudo(self):
+        pass
+
 # ================== CLASSE BASE ==================
 
-class TelaBase(ctk.CTkFrame): 
+class TelaBase(ctk.CTkFrame, InterfaceTela): 
     """
     Classe base para as telas do sistema.
 
