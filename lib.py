@@ -1,5 +1,5 @@
 import abc
-import pandas as pd 
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestClassifier
 import random

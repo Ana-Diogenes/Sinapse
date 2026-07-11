@@ -29,6 +29,7 @@ class TelaBase(ctk.CTkFrame):
         super().__init__(master, fg_color=COR_FUNDO)
         self.controlador = controlador
         self.largura_barra = largura_barra
+        self.usuario = controlador.usuario_atual 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -519,7 +520,6 @@ class TelaResultado(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -591,7 +591,6 @@ class TelaHabitos(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_opcao(self, parent, texto):
@@ -665,7 +664,6 @@ class TelaConquistas(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -714,7 +712,6 @@ class TelaAtividades(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -963,7 +960,6 @@ class TelaSenhaBase(TelaBase):
         super().__init__(master, controlador)
         self.comando_verificar = comando_verificar
         self.texto_instrucao = texto_instrucao
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()  
     
     def criar_conteudo(self):
@@ -1421,7 +1417,6 @@ class TelaPrincipal(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.usuario = controlador.usuario_atual 
         self.criar_conteudo()
     
     def criar_lista_habitos(self, parent):
