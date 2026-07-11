@@ -134,6 +134,7 @@ class TelaLogin(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
+        self.mensagem_erro = None
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -148,6 +149,9 @@ class TelaLogin(TelaBase):
         
         self.nome = self.criar_campo(conteudo, "Nome")
         self.senha = self.criar_campo(conteudo, "Senha", ocultar=True)
+
+        self.mensagem_erro = ctk.CTkLabel(conteudo, text="", font=("Arial", 14), text_color=COR_TITULO)
+        self.mensagem_erro.pack(pady=(5, 10))
         
         avancar = ctk.CTkButton(
             conteudo, text=">", width=65, height=65, corner_radius=35,
@@ -164,12 +168,17 @@ class TelaLogin(TelaBase):
         voltar.place(relx=0, rely=1, anchor="sw", x=10, y=-5)
     
     def fazer_login(self):
+        if not self.nome.get() or not self.senha.get():
+            self.mensagem_erro.configure(text="⚠️ Preencha todos os campos")
+            return
+            
         usuario_encontrado = sistema.procurar_usuario(self.nome.get(), self.senha.get())
         if usuario_encontrado:
+            self.mensagem_erro.configure(text="")
             self.controlador.usuario_atual = usuario_encontrado  
             self.controlador.mostrar_principal()
         else:
-            print("Usuário ou senha inválidos")
+            self.mensagem_erro.configure(text="❌ Usuário ou senha inválidos")
 
 # ================== TELA CADASTRO ==================
 
@@ -1010,7 +1019,7 @@ class TelaSenhaMod(TelaSenhaBase):
         super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
     def verificar_senha(self):
         if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_mod:
-            self.comando_verificar()  
+            self.comando_verificar()
 
 class TelaSenhaDev(TelaSenhaBase):
     """
