@@ -999,8 +999,8 @@ class TelaSenhaMod(TelaSenhaBase):
     def __init__(self, master, controlador):
         super().__init__(master,controlador,"Informe a senha dos moderadores:",controlador.mostrar_mod)
     def verificar_senha(self):
-        if self.senha.get() == lib.Mod(sistema).senha_mod:
-            self.comando_verificar() 
+        if self.senha.get() == lib.Mod(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_mod:
+            self.comando_verificar()  
 
 class TelaSenhaDev(TelaSenhaBase):
     """
@@ -1025,12 +1025,6 @@ class TelaSenhaDev(TelaSenhaBase):
         self.senha = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
         self.senha.pack(pady=(20, 0))
         
-        label_senha2 = ctk.CTkLabel(conteudo, text="Informe a senha do sistema", font=("Arial", 20), text_color=COR_TEXTO)
-        label_senha2.pack(pady=(10, 0))
-        
-        self.senha2 = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
-        self.senha2.pack(pady=(5, 0))
-        
         botao = ctk.CTkButton(
             conteudo, text="Enviar", width=140, height=45,
             fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO,
@@ -1046,8 +1040,8 @@ class TelaSenhaDev(TelaSenhaBase):
         voltar.place(relx=1, rely=1, anchor="se", x=-10, y=-5)
         
     def verificar_senha(self):
-        if self.senha.get() == lib.Dev(sistema).senha_dev and self.senha2.get() == sistema.senha:
-            self.comando_verificar() 
+        if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_dev:
+            self.comando_verificar()  
 
 # ================== TELA MOD ==================
 
@@ -1060,7 +1054,7 @@ class TelaMod(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador, 40)
-        self.mod = lib.Mod(sistema)
+        self.mod = lib.Mod(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1109,7 +1103,7 @@ class TelaDev(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.dev = lib.Dev(sistema)
+        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1150,12 +1144,6 @@ class TelaDev(TelaBase):
             font=("Arial", 15, "bold")
         ).pack(side="left", padx=(0, 15))
         
-        ctk.CTkButton(
-            direita, text="Mudar senha\nsistema", command=self.controlador.mostrar_mudar_senha,
-            width=140, height=60, fg_color="#92655D", hover_color="#7D534D",
-            text_color="#FFE7C7", font=("Arial", 15, "bold")
-        ).pack(side="left")
-        
         self.textbox = ctk.CTkTextbox(
             painel, fg_color="#FFE1B0", text_color=COR_TEXTO,
             font=("Consolas", 14), corner_radius=5, border_width=0,
@@ -1189,7 +1177,7 @@ class TelaExcluirUsuario(TelaBase):
     """
     def __init__(self, master, controlador):
         super().__init__(master, controlador)
-        self.dev = lib.Dev(sistema)
+        self.dev = lib.Dev(controlador.usuario_atual.nome,controlador.usuario_atual.senha,controlador.usuario_atual.caracteristicas,sistema,novo=False)
         self.criar_conteudo()
     
     def criar_conteudo(self):
@@ -1351,60 +1339,6 @@ class TelaAdicionarUsuario(TelaBase):
             font=("Arial", 14, "bold"), command=self.controlador.mostrar_dev
         )
         voltar.place(relx=0.65, rely=0.92, anchor="center")
-
-# ================== TELA ALTERAR SENHA ==================
-
-class TelaAlterarSenha(TelaBase):
-    """
-    Tela para alterar a senha do sistema.
-
-    Attributes:
-        dev (Dev): desenvolvedor do sistema.
-        nova_senha (CTkEntry): nova senha do sistema.
-    """
-    def __init__(self, master, controlador):
-        super().__init__(master, controlador)
-        self.dev = lib.Dev(sistema)
-        self.criar_conteudo()
-    
-    def criar_conteudo(self):
-        conteudo = ctk.CTkFrame(self, fg_color=COR_CAIXA, corner_radius=6)
-        conteudo.grid(row=0, column=1, sticky="nsew", padx=55, pady=55)
-        conteudo.grid_columnconfigure(0, weight=1)
-        
-        acesso = ctk.CTkLabel(conteudo, text="Acesso desenvolvedor", font=("Arial", 18), text_color=COR_TEXTO)
-        acesso.grid(row=0, column=0, sticky="w", padx=30, pady=(15, 0))
-        
-        titulo = ctk.CTkLabel(conteudo, text="Alterar senha do sistema", font=("Arial", 36, "bold"), text_color=COR_TITULO)
-        titulo.grid(row=1, column=0, sticky="w", padx=30, pady=(5, 60))
-        
-        area = ctk.CTkFrame(conteudo, fg_color="transparent")
-        area.grid(row=2, column=0)
-        
-        label = ctk.CTkLabel(area, text="Nova senha:", font=("Arial", 22, "bold"), text_color=COR_TEXTO)
-        label.pack(pady=(0, 10))
-        
-        self.nova_senha = ctk.CTkEntry(area, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
-        self.nova_senha.pack()
-        
-        redefinir = ctk.CTkButton(
-            area, text="Redefinir senha", width=170, height=45,
-            corner_radius=12, fg_color=COR_TITULO, hover_color=COR_HOVER,
-            text_color=COR_TEXTO_BOTAO, font=("Arial", 18, "bold"),
-            command=self.alterar_senha
-        )
-        redefinir.pack(pady=18)
-        
-        voltar = ctk.CTkButton(
-            conteudo, text="Voltar", width=140, height=45,
-            corner_radius=10, fg_color=COR_CAMPO, hover_color=COR_HOVER,
-            text_color=COR_TEXTO, font=("Arial", 18, "bold"),
-            command=self.controlador.mostrar_dev
-        )
-        voltar.place(relx=0.98, rely=0.96, anchor="se")
-    
-    def alterar_senha(self):
-        self.dev.mudar_senha(self.nova_senha.get())
 
 # ================== TELA PRINCIPAL ==================
 
@@ -1594,8 +1528,6 @@ class App(ctk.CTk):
     def mostrar_adicionar(self):
         self.mostrar_tela(TelaAdicionarUsuario)
     
-    def mostrar_mudar_senha(self):
-        self.mostrar_tela(TelaAlterarSenha)
     
     def mostrar_principal(self):
         self.mostrar_tela(TelaPrincipal)

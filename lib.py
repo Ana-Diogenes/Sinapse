@@ -411,21 +411,9 @@ class Sistema:
         usuarios(list): lista de usuarios do sistema
     """
     def __init__(self):
-                
-        with open('senha_sistema.csv',"r") as arquivo_senha:
-            self.__senha = arquivo_senha.read()
         with open('usuarios.csv',"r") as lista_usuarios:
             users = list(csv.reader(lista_usuarios, delimiter=","))
         self.usuarios = users
-    @property
-    def senha(self):
-        return self.__senha
-    
-    @senha.setter
-    def senha(self,nova_senha):
-        with open('senha_sistema.csv','w', newline='') as arquivo:
-            arquivo.write(nova_senha)
-        self.__senha = nova_senha
         
     def atualizar_sistema(self,usuario):
         lista_nova = []
@@ -490,15 +478,8 @@ class Sistema:
         self.usuarios = lista_nova
         return self
 
-class AcessarSistema(abc.ABC):
-    '''
-    Interface para acessar o sistema
-    '''   
-    @abc.abstractmethod
-    def listar_usuarios(self):
-        pass
 
-class Dev(AcessarSistema):
+class Dev(Usuario):
     """
     Tem acesso as informações do sistema e pode modifica-lo
 
@@ -507,8 +488,6 @@ class Dev(AcessarSistema):
         sistema(Sistema): sistema que o dev acessa
     """    
     __senha_dev = 'DevDoSistema'
-    def __init__(self, sistema):
-        self.sistema = sistema
     
     def listar_usuarios(self):
         return self.sistema.usuarios
@@ -516,9 +495,6 @@ class Dev(AcessarSistema):
     def excluir_usuario(self,usuario):
         self.sistema = self.sistema - usuario
         return self.sistema
-    
-    def mudar_senha(self,nova_senha):
-        self.sistema.senha = nova_senha
     
     @property
     def senha_dev(self):
@@ -529,7 +505,7 @@ class Dev(AcessarSistema):
         if len(nova_senha) >=8:
             Dev.senha_dev = nova_senha
             
-class Mod(AcessarSistema):
+class Mod(Usuario):
     """
     Tem acesso ao nome dos usuarios do sistema
 
@@ -538,8 +514,6 @@ class Mod(AcessarSistema):
         sistema(Sistema): sistema que o mod acessa
     """
     __senha_mod = 'ModDoSistema'
-    def __init__(self, sistema):
-        self.sistema = sistema
         
     def listar_usuarios(self):
         nomes_usuarios = []
