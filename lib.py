@@ -401,7 +401,13 @@ class Usuario (AtividadeMixin):
         self.atividades.append(self.registrar_atividade(f'adiquiriu o habito {habito.nome}'))
         self.adicionar_conquista('Melhores Habitos')
         self.sistema.atualizar_sistema(self)
-
+    def atualizar_caracterizacao(self, caracterizacao):
+        self.caracteristicas = caracterizacao
+        self.atividades.append(
+            self.registrar_atividade("atualizou a caracterização")
+        )
+        self.sistema.atualizar_sistema(self)    
+    
 class Sistema:
     """
     Sistema que armazena os usuarios
@@ -528,3 +534,54 @@ class Mod(Usuario):
     def senha(self,nova_senha):
         if len(nova_senha) >=8:
             Mod.__senha_mod = nova_senha
+
+class InterfaceMostrarDados(abc.ABC):
+    """
+    Interface abstrata para mostrar de dados do usuário no terminal
+    """
+    
+    @abc.abstractmethod
+    def mostrar(self,usuario):
+        pass
+    
+class MostrarCaracterização(InterfaceMostrarDados):
+    """
+    Imprime a caracterização completa do usuario
+    """
+    def mostrar(self, usuario):
+        c = usuario.caracteristicas
+        d = c.dados_factuais
+
+        print("=" * 50)
+        print("          CARACTERIZAÇÃO DO USUÁRIO")
+        print("=" * 50)
+        print(f"Idade:                 {d.idade}")
+        print(f"Gênero:                {d.genero}")
+        print(f"Ano acadêmico:         {d.ano_academico}")
+        print(f"Horas de estudo:       {c.horas_estudo_dia}")
+        print(f"Pressão nas provas:    {c.pressao_provas}")
+        print(f"Performance:           {c.performance_academica}")
+        print(f"Nível de estresse:     {c.nivel_estresse}")
+        print(f"Nível de ansiedade:    {c.nivel_ansiedade}")
+        print(f"Nível de depressão:    {c.nivel_depressao}")
+        print(f"Horas de sono:         {c.horas_sono}")
+        print(f"Atividade física:      {c.atividade_fisica}")
+        print(f"Suporte social:        {c.suporte_social}")
+        print(f"Tempo de tela:         {c.tempo_tela}")
+        print(f"Uso da internet:       {c.uso_internet}")
+        print(f"Estresse financeiro:   {c.estresse_financeiro}")
+        print(f"Expectativa familiar:  {c.expectativa_familiar}")
+        print("=" * 50)
+
+class MostrarUsuario(InterfaceMostrarDados):
+    """
+    Imprime um resumo das informações do usuario
+    """
+    def mostrar(self, usuario):
+        print("=" * 50)
+        print("         INFORMAÇÕES DO USUÁRIO")
+        print("=" * 50)
+        print(f"Nome:                  {usuario.nome}")
+        print(f"Hábitos:               {usuario.listar_habitos()}")
+        print(f"Quantidade conquistas: {len(usuario.conquistas)}")
+        print("=" * 50)

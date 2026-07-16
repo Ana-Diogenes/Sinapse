@@ -1,7 +1,6 @@
 import customtkinter as ctk
 import lib
 import ast
-import abc
 
 # ================== CORES ==================
 
@@ -18,17 +17,9 @@ PALETA = ["#8B5C5C", "#E7A49A", "#FAC1A7", "#FFE1B0", "#FFF2B7"]
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
-# ================== INTERFACE TELA ==================
-
-class InterfaceTela(abc.ABC):
-
-    @abc.abstractmethod
-    def criar_conteudo(self):
-        pass
-
 # ================== CLASSE BASE ==================
 
-class TelaBase(ctk.CTkFrame, InterfaceTela): 
+class TelaBase(ctk.CTkFrame): 
     """
     Classe base para as telas do sistema.
 
@@ -1359,6 +1350,88 @@ class TelaAdicionarUsuario(TelaBase):
         )
         voltar.place(relx=0.65, rely=0.92, anchor="center")
 
+# ================== TELA ATUALIZAR CARACTERIZACAO ==================
+
+class TelaAtualizarCaracterizacao(TelaBase):
+    """
+    Tela para atualizar os dados de caracterização do usuário.
+
+    Attributes:
+        direita (CTkScrollableFrame): frame rolável que contém todos os campos.
+        campos (dict): dicionário com todos os campos da caracterização, onde a chave é o nome do campo e o valor é o widget (CTkEntry ou CTkComboBox).
+    """
+    def __init__(self, master, controlador):
+        super().__init__(master, controlador)
+        self.criar_conteudo()
+
+    def criar_campo_pequeno(self, parent, texto):
+        bloco = ctk.CTkFrame(parent, fg_color="transparent")
+        bloco.pack(fill="x", pady=5)
+        label = ctk.CTkLabel(bloco, text=texto, font=("Arial", 13), text_color=COR_TITULO)
+        label.pack(anchor="w")
+        entrada = ctk.CTkEntry(bloco, width=130, height=25, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white")
+        entrada.pack()
+        return entrada
+
+    def criar_conteudo(self):
+        conteudo = ctk.CTkFrame(self, fg_color="transparent")
+        conteudo.grid(row=0, column=1, sticky="nsew", padx=55, pady=55)
+        painel = ctk.CTkFrame(conteudo, fg_color=COR_CAIXA, corner_radius=8)
+        painel.pack(fill="both", expand=True)
+        ctk.CTkLabel(painel, text="Atualizar caracterização", font=("Arial", 18), text_color=COR_TITULO).pack(anchor="w", padx=30, pady=(15, 0))
+        ctk.CTkLabel(painel, text="Preencha seus novos dados", font=("Arial", 36, "bold"), text_color=COR_TITULO).pack(anchor="w", padx=30, pady=(5, 15))
+        area = ctk.CTkFrame(painel, fg_color="transparent")
+        area.pack(fill="both", expand=True, padx=4, pady=4)
+        self.direita = ctk.CTkScrollableFrame(area, width=300, height=260, fg_color="#FFE1B0", scrollbar_button_color=COR_CAMPO, scrollbar_button_hover_color=COR_HOVER)
+        self.direita.pack()
+        self.direita.grid_columnconfigure(0, weight=1)
+        self.direita.grid_columnconfigure(1, weight=1)
+        campos = [("Idade", "idade"), ("Genero", "genero"), ("Ano academico", "ano"), ("Horas de estudo", "horas_estudo"), ("Tempo tela", "tela"), ("Horas de sono", "sono"), ("Suporte social", "suporte"), ("Pressao provas", "pressao"), ("Nivel estresse", "estresse"), ("Nivel ansiedade", "ansiedade"), ("Uso de internet", "internet"), ("Performance academica", "performance"), ("Expectativa familiar", "familia"), ("Atividade física", "fisica"), ("Estresse financeiro", "financeiro"), ("Nivel depressão", "depressao")]
+        self.campos = {}
+        linha = coluna = 0
+        for texto, nome in campos:
+            if nome == "genero":
+                bloco = ctk.CTkFrame(self.direita, fg_color="transparent")
+                bloco.grid(row=linha, column=coluna, padx=10, pady=4, sticky="w")
+                label = ctk.CTkLabel(bloco, text=texto, font=("Arial", 13), text_color=COR_TITULO)
+                label.pack(anchor="w")
+                combo = ctk.CTkComboBox(bloco, values=["Mulher", "Homem", "Outro"], width=130, height=25, corner_radius=8, border_width=0, fg_color=COR_CAMPO, button_color=COR_CAMPO, button_hover_color=COR_HOVER, dropdown_fg_color=COR_CAMPO, dropdown_hover_color=COR_HOVER, dropdown_text_color="white", text_color="white")
+                combo.pack()
+                self.campos[nome] = combo
+            else:
+                bloco = ctk.CTkFrame(self.direita, fg_color="transparent")
+                bloco.grid(row=linha, column=coluna, padx=10, pady=4, sticky="w")
+                self.campos[nome] = self.criar_campo_pequeno(bloco, texto)
+            coluna += 1
+            if coluna == 2:
+                coluna = 0
+                linha += 1
+        botoes_frame = ctk.CTkFrame(painel, fg_color="transparent")
+        botoes_frame.pack(pady=15)
+        salvar = ctk.CTkButton(botoes_frame, text="Salvar", width=140, height=45, corner_radius=15, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.salvar)
+        salvar.pack(side="left", padx=10)
+        voltar = ctk.CTkButton(botoes_frame, text="Voltar", width=140, height=45, corner_radius=15, fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TITULO, font=("Arial", 18, "bold"), command=self.controlador.mostrar_principal)
+        voltar.pack(side="left", padx=10)
+        self.preencher_dados()
+
+    def preencher_dados(self):
+        c = self.usuario.caracteristicas
+        d = c.dados_factuais
+        mapeamento = {"idade": str(d.idade), "ano": str(d.ano_academico), "horas_estudo": str(c.horas_estudo_dia), "pressao": str(c.pressao_provas), "performance": str(c.performance_academica), "estresse": str(c.nivel_estresse), "ansiedade": str(c.nivel_ansiedade), "depressao": str(c.nivel_depressao), "sono": str(c.horas_sono), "fisica": str(c.atividade_fisica), "suporte": str(c.suporte_social), "tela": str(c.tempo_tela), "internet": str(c.uso_internet), "financeiro": str(c.estresse_financeiro), "familia": str(c.expectativa_familiar)}
+        for nome, valor in mapeamento.items():
+            self.campos[nome].delete(0, "end")
+            self.campos[nome].insert(0, valor)
+        genero_map = {"Female": "Mulher", "Male": "Homem", "Other": "Outro"}
+        self.campos["genero"].set(genero_map.get(d.genero, "Outro"))
+
+    def salvar(self):
+        genero = self.campos["genero"].get()
+        genero = "Female" if genero == "Mulher" else "Male" if genero == "Homem" else "Other"
+        dados_f = lib.DadosFactuais(int(self.campos["idade"].get()), genero, int(self.campos["ano"].get()))
+        caracterizacao = lib.Caracterizacao(dados_f, float(self.campos["horas_estudo"].get()), float(self.campos["pressao"].get()), float(self.campos["performance"].get()), float(self.campos["estresse"].get()), float(self.campos["ansiedade"].get()), float(self.campos["depressao"].get()), float(self.campos["sono"].get()), float(self.campos["fisica"].get()), float(self.campos["suporte"].get()), float(self.campos["tela"].get()), float(self.campos["internet"].get()), float(self.campos["financeiro"].get()), float(self.campos["familia"].get()))
+        self.usuario.atualizar_caracterizacao(caracterizacao)
+        self.controlador.mostrar_principal()
+
 # ================== TELA PRINCIPAL ==================
 
 class TelaPrincipal(TelaBase):
@@ -1404,13 +1477,7 @@ class TelaPrincipal(TelaBase):
             mensagem.pack(pady=30)
     
     def criar_botoes(self, parent):
-        botoes = [
-            ("O que é o Burnout?", self.controlador.mostrar_burnout),
-            ("Prever se estou em risco de Burnout", self.controlador.mostrar_resultado),
-            ("Desenvolver um novo hábito", self.controlador.mostrar_habitos),
-            ("Acessar conquistas", self.controlador.mostrar_conquistas),
-            ("Registro de atividades", self.controlador.mostrar_atividades)
-        ]
+        botoes = [("O que é o Burnout?", self.controlador.mostrar_burnout),("Prever se estou em risco de Burnout", self.controlador.mostrar_resultado),("Desenvolver um novo hábito", self.controlador.mostrar_habitos),("Acessar conquistas", self.controlador.mostrar_conquistas),("Registro de atividades", self.controlador.mostrar_atividades)]
         
         for texto, comando in botoes:
             botao = ctk.CTkButton(
@@ -1450,14 +1517,16 @@ class TelaPrincipal(TelaBase):
         )
         sair.place(relx=0.98, rely=1, anchor="se")
         
-        configuracoes = ctk.CTkButton(
-            conteudo, text="⏣", height=30, width=30, corner_radius=10,
-            fg_color=COR_FUNDO, bg_color=COR_FUNDO, hover_color=COR_CAIXA,
-            text_color=COR_TEXTO, font=("Arial", 40, "bold"),
-            command=self.controlador.mostrar_configuracao
-        )
-        configuracoes.place(relx=1.0, x=-10, y=10, anchor="ne")
-
+        info_crt = ctk.CTkButton(conteudo, text="Info. Caract.", width=120, height=30, corner_radius=10,fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,font=("Arial", 14, "bold"), command=lambda: lib.MostrarCaracterização().mostrar(self.usuario))
+        info_crt.place(relx=0.85, rely=1, anchor="se")
+        
+        info_grl = ctk.CTkButton(conteudo, text="Info. Geral.", width=120, height=30, corner_radius=10,fg_color=COR_CAMPO, hover_color=COR_HOVER, text_color=COR_TEXTO,font=("Arial", 14, "bold"), command=lambda: lib.MostrarUsuario().mostrar(self.usuario))
+        info_grl.place(relx=0.67, rely=1, anchor="se")
+        
+        configuracoes = ctk.CTkButton(conteudo, text="⏣", height=30, width=30, corner_radius=10,fg_color=COR_FUNDO, bg_color=COR_FUNDO, hover_color=COR_CAIXA,text_color=COR_TEXTO, font=("Arial", 40, "bold"),command=self.controlador.mostrar_configuracao)
+        configuracoes.place(relx=0.98, rely=0.03, anchor="ne")
+        editar = ctk.CTkButton(conteudo, text="📝", height=30, width=30, corner_radius=10,fg_color=COR_FUNDO, bg_color=COR_FUNDO, hover_color=COR_CAIXA,text_color=COR_TEXTO, font=("Arial", 40, "bold"),command=self.controlador.mostrar_atualizar_caracterizacao)
+        editar.place(relx=0.85, rely=0.03, anchor="ne")
 # ================== CONTROLADOR ==================
 
 class App(ctk.CTk):
@@ -1547,6 +1616,8 @@ class App(ctk.CTk):
     def mostrar_adicionar(self):
         self.mostrar_tela(TelaAdicionarUsuario)
     
+    def mostrar_atualizar_caracterizacao(self):
+        self.mostrar_tela(TelaAtualizarCaracterizacao)
     
     def mostrar_principal(self):
         self.mostrar_tela(TelaPrincipal)
