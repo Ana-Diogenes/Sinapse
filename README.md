@@ -1,162 +1,166 @@
 # 🧠 Sinapse // Projeto Final Programação Orientada a Objetos
 
-O **Sinapse** é um sistema desktop desenvolvido em **Python** com **CustomTkinter**, criado para auxiliar estudantes no acompanhamento de hábitos saudáveis e na conscientização sobre fatores relacionados à **Síndrome de Burnout**.
+> **Sistema inteligente para monitoramento de hábitos e predição do risco de Burnout utilizando Inteligência Artificial.**
 
-O sistema utiliza **Inteligência Artificial** para estimar o nível de risco de burnout a partir de informações acadêmicas, comportamentais e emocionais fornecidas pelo usuário. Além da previsão, a aplicação incentiva a adoção de hábitos saudáveis, registra a evolução do usuário e oferece ferramentas para promover o bem-estar físico e mental.
+O **Sinapse** é uma aplicação desktop desenvolvida em **Python** que auxilia estudantes a desenvolver hábitos saudáveis enquanto realiza uma estimativa do nível de risco de Burnout por meio de um modelo de **Machine Learning**.
+
+Além da predição, o sistema permite acompanhar hábitos, registrar atividades, visualizar conquistas e acessar conteúdos educativos sobre saúde mental.
 
 ---
 
 ## ✨ Funcionalidades
 
-- Cadastro e autenticação de usuários;
-- Coleta de informações pessoais, acadêmicas e comportamentais;
-- Predição do nível de risco de burnout utilizando Inteligência Artificial;
-- Registro do histórico de atividades do usuário;
-- Sistema de conquistas;
-- Escolha e acompanhamento de hábitos saudáveis;
-- Mensagens motivacionais personalizadas para cada hábito;
-- Ferramentas auxiliares para promoção da saúde e bem-estar;
-- Persistência de dados em arquivos CSV;
-- Diferentes níveis de acesso (Usuário, Moderador e Desenvolvedor).
+- 👤 Cadastro e autenticação de usuários
+- 📋 Coleta de informações pessoais e acadêmicas
+- 🤖 Predição do risco de Burnout utilizando **Random Forest**
+- 💤 Gerenciamento de hábitos saudáveis
+  - Dormir cedo
+  - Atividade física
+  - Leitura
+  - Meditação
+- 📈 Registro de atividades realizadas
+- 🏆 Sistema de conquistas
+- 📚 Informações educativas sobre Síndrome de Burnout
+- 🛠️ Área administrativa para desenvolvedores e moderadores
 
 ---
 
-## 🧠 Inteligência Artificial
+## 🧩 Tecnologias Utilizadas
 
-A previsão é realizada por um modelo de **Random Forest**, treinado a partir do conjunto de dados **Student Mental Health Burnout Dataset**.
-
-Durante o cadastro, o usuário informa dados como:
-
-- Idade;
-- Gênero;
-- Ano acadêmico;
-- Horas de estudo por dia;
-- Pressão durante provas;
-- Desempenho acadêmico;
-- Nível de estresse;
-- Nível de ansiedade;
-- Nível de depressão;
-- Horas de sono;
-- Nível de atividade física;
-- Suporte social;
-- Tempo de tela;
-- Tempo de uso da internet;
-- Estresse financeiro;
-- Expectativa familiar.
-
-Essas informações são processadas pelo modelo para classificar o usuário em um dos níveis de risco de burnout.
-
----
-
-## 💪 Hábitos Saudáveis
-
-O sistema permite que o usuário adicione hábitos saudáveis ao seu perfil. Cada hábito possui mensagens motivacionais e ferramentas específicas para auxiliar no acompanhamento.
-
-### 😴 Dormir Cedo
-
-- Mensagens motivacionais;
-- Cálculo automático do tempo de sono.
-
-### 🏃 Atividade Física
-
-- Mensagens motivacionais;
-- Cálculo do Índice de Massa Corporal (IMC).
-
-### 📚 Leitura
-
-- Mensagens motivacionais;
-- Cálculo da média de páginas lidas por dia.
-
-### 🧘 Meditação
-
-- Mensagens motivacionais;
-- Cálculo do tempo de meditação.
-
----
-
-## 🏆 Sistema de Conquistas
-
-O Sinapse recompensa automaticamente ações realizadas pelo usuário, incentivando sua participação no sistema.
-
-Entre as conquistas disponíveis estão:
-
-- **Usuário de IA** — obtida ao realizar a previsão de burnout;
-- **Melhores Hábitos** — obtida ao adicionar novos hábitos saudáveis.
-
----
-
-## 👥 Perfis de Usuário
-
-O sistema possui três níveis de acesso:
-
-### Usuário
-
-- Realiza a previsão de burnout;
-- Adiciona hábitos;
-- Visualiza suas atividades e conquistas.
-
-### Moderador
-
-Além das funcionalidades do usuário:
-
-- Pode visualizar os nomes dos usuários cadastrados no sistema.
-
-### Desenvolvedor
-
-Além das funcionalidades do usuário:
-
-- Pode visualizar todos os dados cadastrados;
-- Pode remover usuários do sistema.
+- Python 3
+- CustomTkinter
+- Pandas
+- Scikit-learn
+- CSV
+- Programação Orientada a Objetos (POO)
 
 ---
 
 ## 🏗️ Arquitetura do Projeto
 
-O projeto foi desenvolvido seguindo os princípios da **Programação Orientada a Objetos (POO)**.
+O sistema foi desenvolvido seguindo conceitos de **Programação Orientada a Objetos**, utilizando:
 
-Os principais conceitos utilizados são:
+- Encapsulamento
+- Herança
+- Polimorfismo
+- Classes Abstratas (ABC)
+- Mixins
+- Properties
+- Separação entre interface gráfica e regras de negócio
 
-- Encapsulamento;
-- Herança;
-- Polimorfismo;
-- Classes Abstratas (ABC);
-- Mixins;
-- Sobrecarga de operadores (`+` e `-`);
-- Propriedades (`@property`);
-- Separação entre regras de negócio e interface gráfica.
+Principais classes:
+
+```
+Sistema
+│
+├── Usuario
+│   ├── Dev
+│   └── Mod
+│
+├── Caracterizacao
+│
+├── DadosFactuais
+│
+├── ModeloIA
+│
+└── Habito
+    ├── DormirCedo
+    ├── AtividadeFisica
+    ├── Leitura
+    └── Meditacao
+```
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🧠 Inteligência Artificial
 
-- Python
-- CustomTkinter
-- Pandas
-- Scikit-learn
-- Random Forest Classifier
-- CSV
-- Datetime
-- AST
+O sistema utiliza um modelo de classificação baseado em **Random Forest**, treinado com um conjunto de dados contendo informações relacionadas à saúde mental de estudantes.
+
+A predição considera fatores como:
+
+- idade;
+- gênero;
+- ano acadêmico;
+- horas de estudo;
+- pressão em provas;
+- desempenho acadêmico;
+- nível de estresse;
+- ansiedade;
+- depressão;
+- horas de sono;
+- atividade física;
+- suporte social;
+- tempo de tela;
+- uso da internet;
+- estresse financeiro;
+- expectativa familiar.
+
+Ao final, o modelo classifica o usuário em um dos níveis de risco:
+
+- 🟢 Low
+- 🟡 Medium
+- 🔴 High
 
 ---
 
-## 📂 Estrutura Geral
+## 💻 Interface
 
-```text
-📦 projeto
-├── interface.py                      # Interface gráfica
-├── lib.py                            # Regras de negócio
-├── usuarios.csv                      # Banco de dados dos usuários
+A interface foi construída utilizando **CustomTkinter**, proporcionando uma experiência moderna e intuitiva.
+
+O sistema possui telas para:
+
+- Tela inicial
+- Login
+- Cadastro
+- Caracterização do usuário
+- Tela principal
+- Resultado da IA
+- Hábitos
+- Atividades
+- Conquistas
+- Informações sobre Burnout
+- Área administrativa
+
+---
+
+## 📂 Estrutura do Projeto
+
+```
+Sinapse/
+│
+├── interface.py
+├── lib.py
+├── usuarios.csv
 ├── student_mental_health_burnout_1M.csv
+│
 └── README.md
 ```
 
 ---
 
-## 🎯 Objetivo
 
-O **Sinapse** busca incentivar o autocuidado e auxiliar estudantes na identificação de fatores relacionados ao burnout por meio da aplicação de técnicas de Inteligência Artificial.
+## 🎯 Objetivos
 
-Além de fornecer uma estimativa de risco, o sistema incentiva mudanças positivas na rotina por meio da adoção de hábitos saudáveis, do acompanhamento das atividades realizadas e de um sistema de conquistas, promovendo uma experiência interativa e educativa.
+O projeto busca:
 
-<img width="8192" height="2855" alt="User Management System Flow-2026-07-13-180155" src="https://github.com/user-attachments/assets/6de08edf-4958-49fc-bd30-3e58dc44d9af" />
+- incentivar hábitos saudáveis;
+- conscientizar sobre saúde mental;
+- auxiliar na identificação de fatores associados ao Burnout;
+- aplicar conceitos de Inteligência Artificial e Programação Orientada a Objetos em uma aplicação real.
+
+---
+
+## 📚 Conceitos Aplicados
+
+- Programação Orientada a Objetos
+- Interface Gráfica
+- Machine Learning
+- Engenharia de Software
+- Manipulação de arquivos CSV
+- Estruturas de Dados
+- Tratamento de exceções
+- Persistência de dados
+
+---
+
+<img width="8192" height="2810" alt="User Management System Flow-2026-07-16-175827" src="https://github.com/user-attachments/assets/5dd149a5-97ad-42a7-ad56-f1a73afc4b51" />
