@@ -1,3 +1,9 @@
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![CustomTkinter](https://img.shields.io/badge/CustomTkinter-GUI-green)
+![Machine Learning](https://img.shields.io/badge/Machine-Learning-orange)
+![POO](https://img.shields.io/badge/OOP-Project-red)
+![Status](https://img.shields.io/badge/status-concluded-success)
+
 # 🧠 Sinapse // Projeto Final Programação Orientada a Objetos
 
 > **Sistema inteligente para monitoramento de hábitos e predição do risco de Burnout utilizando Inteligência Artificial.**
