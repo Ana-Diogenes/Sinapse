@@ -169,4 +169,4 @@ O projeto busca:
 
 ---
 
-<img width="8192" height="2810" alt="User Management System Flow-2026-07-16-175827" src="https://github.com/user-attachments/assets/5dd149a5-97ad-42a7-ad56-f1a73afc4b51" />
+<img width="8192" height="3558" alt="Diagrama-de-clases-sinapse-2026-07-17-013619" src="https://github.com/user-attachments/assets/9715663b-5e89-4c27-9d50-372f181d5e10" />
