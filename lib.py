@@ -403,9 +403,8 @@ class Usuario (AtividadeMixin):
         self.sistema.atualizar_sistema(self)
     def atualizar_caracterizacao(self, caracterizacao):
         self.caracteristicas = caracterizacao
-        self.atividades.append(
-            self.registrar_atividade("atualizou a caracterização")
-        )
+        self.atividades.append(self.registrar_atividade("atualizou a caracterizacao"))
+        self.adicionar_conquista('Voce mudou')
         self.sistema.atualizar_sistema(self)    
     
 class Sistema:
@@ -417,20 +416,20 @@ class Sistema:
         usuarios(list): lista de usuarios do sistema
     """
     def __init__(self):
-        with open('usuarios.csv',"r") as lista_usuarios:
+        with open('usuarios.csv', "r", newline='') as lista_usuarios:
             users = list(csv.reader(lista_usuarios, delimiter=","))
         self.usuarios = users
-        
-    def atualizar_sistema(self,usuario):
+
+    def atualizar_sistema(self, usuario):
         lista_nova = []
-        with open('usuarios.csv',"r") as arquivo:
+        with open('usuarios.csv', "r", newline='') as arquivo:
             leitor = csv.reader(arquivo)
             for linha in leitor:
                 if linha[0].lower() != usuario.nome.lower():
                     lista_nova.append(linha)
                 else:
-                    lista_nova.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
-        with open('usuarios.csv','w', newline='') as arquivo:
+                    lista_nova.append([usuario.nome, usuario.senha, str(usuario.caracteristicas), str(usuario.atividades), usuario.listar_habitos(), usuario.listar_conquistas()])
+        with open('usuarios.csv', 'w', newline='') as arquivo:
             escritor = csv.writer(arquivo)
             escritor.writerows(lista_nova)
             
@@ -457,30 +456,27 @@ class Sistema:
         return False
             
     def __add__(self, usuario):
-        with open('usuarios.csv',"a", newline='') as usuarios:
+        with open('usuarios.csv', "a", newline='') as usuarios:
             escritor = csv.writer(usuarios)
-            escritor.writerow([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
-        self.usuarios.append([usuario.nome,usuario.senha,str(usuario.caracteristicas),str(usuario.atividades),usuario.listar_habitos(),usuario.listar_conquistas()])
+            escritor.writerow([usuario.nome, usuario.senha, str(usuario.caracteristicas), str(usuario.atividades), usuario.listar_habitos(), usuario.listar_conquistas()])
+        self.usuarios.append([usuario.nome, usuario.senha, str(usuario.caracteristicas), str(usuario.atividades), usuario.listar_habitos(), usuario.listar_conquistas()])
         return self
     
     def __sub__(self, usuario):
         lista_nova = []
         achou = False
-        with open('usuarios.csv',"r") as usuarios:
+        with open('usuarios.csv', "r", newline='') as usuarios:
             lista_usuarios = csv.reader(usuarios, delimiter=",")
             for linha in lista_usuarios:
-                if (linha [0]).lower() != (usuario).lower():
+                if (linha[0]).lower() != (usuario).lower():
                     lista_nova.append(linha)
-                elif (linha [0]).lower() == (usuario).lower():
+                elif (linha[0]).lower() == (usuario).lower():
                     achou = True
-        if achou == False: 
+        if achou == False:
             return self
-        with open ('usuarios.csv','w') as users: 
-            for i,linha in enumerate(lista_nova):
-                if i==0:
-                    users.write(linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
-                else:
-                    users.write('\n'+linha[0] +','+ linha[1] +',' + linha[2] +',' + linha[3] +','+ linha[4]+','+linha[5])
+        with open('usuarios.csv', 'w', newline='') as users:
+            escritor = csv.writer(users)
+            escritor.writerows(lista_nova)
         self.usuarios = lista_nova
         return self
 

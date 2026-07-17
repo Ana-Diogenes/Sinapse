@@ -1031,6 +1031,9 @@ class TelaSenhaDev(TelaSenhaBase):
         
         texto = ctk.CTkLabel(conteudo, text=self.texto_instrucao, font=("Arial", 20), text_color=COR_TEXTO)
         texto.pack()
+    
+        acesso_restrito = ctk.CTkLabel(conteudo, text="(acesso restrito)", font=("Arial", 14, "italic"), text_color="red")
+        acesso_restrito.pack(pady=(5, 0))
         
         self.senha = ctk.CTkEntry(conteudo, width=490, height=42, corner_radius=8, border_width=0, fg_color=COR_CAMPO, text_color="white", show="*")
         self.senha.pack(pady=(20, 0))
@@ -1051,7 +1054,7 @@ class TelaSenhaDev(TelaSenhaBase):
         
     def verificar_senha(self):
         if self.senha.get() == lib.Dev(self.usuario.nome,self.usuario.senha,self.usuario.caracteristicas,sistema,novo=False).senha_dev:
-            self.comando_verificar()  
+            self.comando_verificar()
 
 # ================== TELA MOD ==================
 
