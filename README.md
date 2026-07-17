@@ -169,4 +169,9 @@ O projeto busca:
 
 ---
 
-<img width="8192" height="3558" alt="Diagrama-de-clases-sinapse-2026-07-17-013619" src="https://github.com/user-attachments/assets/9715663b-5e89-4c27-9d50-372f181d5e10" />
+<img width="1127" height="727" alt="Captura de tela 2026-07-16 152716" src="https://github.com/user-attachments/assets/d76366c5-6dfe-48b1-a3ef-2cb3aa1c93df" />
+
+---
+
+<img width="8192" height="3558" alt="Diagrama-de-clases-sinapse-2026-07-17-092812" src="https://github.com/user-attachments/assets/b945c106-9c0c-4f90-b2d7-7b39fdd7dfaf" />
+
